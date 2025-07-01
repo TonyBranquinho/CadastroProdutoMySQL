@@ -9,12 +9,12 @@ namespace CadastroProdutoMySQL.Servicos
         public List<Produto> produtos { get; private set; }
         public List<Estoque> estoque { get; private set; }
 
-        // Metodo vazio
+        // Construtor vazio
         public ProdutoServico() 
         {
         }
 
-        // Metodo com parametros
+        // Construtor com parametros
         public ProdutoServico(List<Produto> produtos, List<Estoque> estoque)
         {
             this.produtos = produtos;
@@ -22,5 +22,33 @@ namespace CadastroProdutoMySQL.Servicos
         }
 
 
+        // Metodo Cadastro - CREATE
+        public void CadastroProduto(Produto novoProduto)
+        {
+            produtos.Add(novoProduto);
+        }
+
+
+        // Metodo Busca - READ
+        public Produto BuscaProduto(int Codigo)
+        {
+            Produto produtoEncontrado = produtos.FirstOrDefault(p => p.Codigo == Codigo);
+            return produtoEncontrado;
+        }
+
+
+        // Metodo Atualiza - UPDATE
+        public void AtualizaProduto(Produto produtoEncontrado, string novoNome, double novoPreco)
+        {
+            produtoEncontrado.Nome = novoNome;
+            produtoEncontrado.Preco = novoPreco;
+        }
+
+
+        // Metodo Excluir - DELETE
+        public void ExcluirProduto(Produto excluiProduto)
+        {
+            produtos.Remove(excluiProduto);
+        }
     }
 }
