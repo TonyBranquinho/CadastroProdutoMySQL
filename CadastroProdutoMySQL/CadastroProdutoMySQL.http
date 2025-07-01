@@ -1,0 +1,6 @@
+@CadastroProdutoMySQL_HostAddress = http://localhost:5248
+
+GET {{CadastroProdutoMySQL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
