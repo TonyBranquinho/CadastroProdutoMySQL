@@ -22,4 +22,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+var op = new CadastroProdutoMySQL.Dados.OperacaoBancoDados();
+op.ListarProdutos();
+
 app.Run();
