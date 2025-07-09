@@ -1,12 +1,16 @@
-﻿using MySql.Data.MySqlClient; // Importa o namespace do driver MySql.Data
+﻿using CadastroProdutoMySQL.Modelos;
+using MySql.Data.MySqlClient; // Importa o namespace do driver MySql.Data
 
 namespace CadastroProdutoMySQL.Dados
 {
     public class OperacaoBancoDados
     {
-
-        public void ListarProdutos() // Metodo que vai ler os dados do banco de dados
+        // Metodo que vai ler os dados do banco de dados e retornar uma lista
+        public List<Produto> ListarProdutos()
         {
+            // Cria uma lsita pra armazenas os produtos recuperados do banco
+            List<Produto> listaProdutos = new List<Produto>();
+
             // Define uma linha de conexao com o banco de dados
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
 
@@ -32,22 +36,25 @@ namespace CadastroProdutoMySQL.Dados
                         // Enquanto houver linhas pra ler no resultado
                         while (reader.Read())
                         {
-                            
+                            // Cria um novo objeto Produto
+                            Produto p = new Produto();
 
-                            // Lê o campo Id (tipo INT) da tabela e armazena em uma variavel loca
-                            int id = reader.GetInt32("Id");
+                            // Lê o campo Id (tipo INT) e atribui ao produto
+                            p.Id = reader.GetInt32("Id");
 
-                            // Lê o campo Nome (tipo VARCHAR) da tabela e armazena em uma variavel loca
-                            string nome = reader.GetString("Nome");
+                            // Lê o campo Nome (tipo VARCHAR) e atribui ao produto
+                            p.Nome = reader.GetString("Nome");
 
-                            // Lê o campo Preco (tipo Decimal) da tabela e armazena em uma variavel loca
-                            decimal preco = reader.GetDecimal("Preco");
+                            // Lê o campo Preco (tipo Decimal) e atribui ao produto
+                            p.Preco = reader.GetDecimal("Preco");
 
-                            // Imprime os dados no console para teste
-                            Console.WriteLine($"Id: {id}, Nome: {nome}, Preco: {preco}");
+                            listaProdutos.Add(p);
                         }
                     }
                 }
+
+                // Retorna a lista de produtos preenchida
+                return listaProdutos;
             }
         }
     }
