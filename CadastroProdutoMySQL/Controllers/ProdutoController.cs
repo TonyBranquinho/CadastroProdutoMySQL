@@ -10,18 +10,28 @@ namespace CadastroProdutoMySQL.Controllers
 
     public class ProdutoController : ControllerBase // Classe base para controlador de API
     {
+
+        // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
+        private readonly OperacaoBancoDados _operacoes;
+
+
+        // Construtor que inicializa a OperacaoBancoDados
+        public ProdutoController()
+        {
+            _operacoes = new OperacaoBancoDados();
+        }
+
+
+
         // GET: Produto
         [HttpGet]
         public ActionResult<List<Produto>> GetTodos()
-        {
-            // instancia OperacaoBancoDados
-            OperacaoBancoDados operacao = new OperacaoBancoDados();
-
+        {            
             // Chama o metodo que retorna os produtos
-            List<Produto> lista = operacao.ListarProdutos();
+            List<Produto> listaProdutos = _operacoes.ListarProdutos();
 
             // Retorna a lista como resposta HTTP 200
-            return Ok(lista);
+            return Ok(listaProdutos);
         }
     }
 }
