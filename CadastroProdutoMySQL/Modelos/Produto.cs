@@ -3,7 +3,7 @@
     public class Produto
     {
         // Atributos da classe
-        public int Codigo { get; set; }
+        public int Id { get; set; }
         public string Nome { get; set; }
         public double Preco { get; set; }
 
@@ -13,9 +13,9 @@
         }
 
         // Construtor com parametros
-        public Produto(int codigo, string nome, double preco)
+        public Produto(int id, string nome, double preco)
         {
-            Codigo = codigo;
+            Id = id;
             Nome = nome;
             Preco = preco;
         }
