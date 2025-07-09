@@ -32,7 +32,7 @@ namespace CadastroProdutoMySQL.Servicos
         // Metodo Busca - READ
         public Produto BuscaProduto(int Codigo)
         {
-            Produto produtoEncontrado = produtos.FirstOrDefault(p => p.Codigo == Codigo);
+            Produto produtoEncontrado = produtos.FirstOrDefault(p => p.Id == Codigo);
             return produtoEncontrado;
         }
 

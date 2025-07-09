@@ -2,16 +2,16 @@
 {
     public class Estoque
     {
-        public int Codigo { get; set; }
+        public int Id { get; set; }
         public int Quantidade { get; set; }
 
         public Estoque()
         {
         }
 
-        public Estoque(int codigo, int quantidade)
+        public Estoque(int id, int quantidade)
         {
-            Codigo = codigo;
+            Id = id;
             Quantidade = quantidade;
         }
     }
