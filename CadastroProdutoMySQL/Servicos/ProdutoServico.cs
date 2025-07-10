@@ -38,7 +38,7 @@ namespace CadastroProdutoMySQL.Servicos
 
 
         // Metodo Atualiza - UPDATE
-        public void AtualizaProduto(Produto produtoEncontrado, string novoNome, double novoPreco)
+        public void AtualizaProduto(Produto produtoEncontrado, string novoNome, decimal novoPreco)
         {
             produtoEncontrado.Nome = novoNome;
             produtoEncontrado.Preco = novoPreco;
