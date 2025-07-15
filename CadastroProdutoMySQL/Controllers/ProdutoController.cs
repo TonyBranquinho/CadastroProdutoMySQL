@@ -23,15 +23,31 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-        // GET: Produto
+        // READ: Produto
         [HttpGet]
         public ActionResult<List<Produto>> GetTodos()
-        {            
+        {
             // Chama o metodo que retorna os produtos
             List<Produto> listaProdutos = _operacoes.ListarProdutos();
 
             // Retorna a lista como resposta HTTP 200
             return Ok(listaProdutos);
+        }
+
+
+        // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
+        // POST: Produto
+        [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
+        public ActionResult<Produto> Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
+        {
+            int id = novoProduto.Id;
+
+            // Adiciona o novo produto na lista
+            _operacoes.InserirProduto(novoProduto);
+
+            // Retorna o novo produto com status 201 Created
+            return CreatedAtAction(nameof(GetTodos), new { id = novoProduto.Id }, novoProduto);
+
         }
     }
 }
