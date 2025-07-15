@@ -5,7 +5,11 @@ namespace CadastroProdutoMySQL.Dados
 {
     public class OperacaoBancoDados
     {
-        // Metodo que vai ler os dados do banco de dados e retornar uma lista
+
+
+
+
+        // METODO PRA LER OS DADOS NO BANCO DE DADOS E RETORNAR UMA LISTA
         public List<Produto> ListarProdutos()
         {
             // Cria uma lsita pra armazenas os produtos recuperados do banco
@@ -55,6 +59,44 @@ namespace CadastroProdutoMySQL.Dados
 
                 // Retorna a lista de produtos preenchida
                 return listaProdutos;
+            }
+        }
+
+
+
+
+
+
+
+        // METODO - POST - PRA INSERIR UM PRODUTO NO BANCO DE DADOS
+        public void InserirProduto(Produto novoProduto)
+        {
+            // Define uma linha de conexao com o banco de dados
+            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+
+            // Cria um objeto de conexão com o banco usando a string acima
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexão com o banco
+                conn.Open();
+
+                // Cria o comando SQL INSERT com parametros pra evitar SQL Injection
+                string sql = "INSERT INTO produtos (Nome, Preco) VALUES (@Nome, @Preco)";
+
+                // Cria um comando SQL a partir da conexão aberta e do texto SQL
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    // Adiciona o parametro @Nome e define o valor cindo do objeto novoProduto
+                    cmd.Parameters.AddWithValue("@Nome", novoProduto.Nome);
+
+                    // Adiciona o parametro @Preco e define seu valor vindo do objeto novoProduto
+                    cmd.Parameters.AddWithValue("@Preco", novoProduto.Preco);
+
+                    // Executa o comando no banco (nao retorna resultados, apenas executa)
+                    cmd.ExecuteNonQuery();
+                }
+
+                // Fecha atomaticamente a conexao ao sair do bloco using
             }
         }
     }
