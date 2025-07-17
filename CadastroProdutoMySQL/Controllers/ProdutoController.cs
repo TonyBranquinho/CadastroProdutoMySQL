@@ -23,7 +23,8 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-        // READ: Produto
+
+        // METODO PARA LER E LISTAR TODOS OS PRODUTOS DO BANCO DE DADOS
         [HttpGet]
         public ActionResult<List<Produto>> GetTodos()
         {
@@ -35,8 +36,32 @@ namespace CadastroProdutoMySQL.Controllers
         }
 
 
+
+
+
+        // METODO PARA LER E LISTAR UM PRODUTO SELECIONADO PELO ID
+        [HttpGet("{id}")]
+        public ActionResult<Produto> GetPorId(int id)
+        {    
+            // Busca o produto pelo ID no banco de dados
+            Produto produtoId = _operacoes.BuscarProdutoId(id);
+
+            // Se nao encontrar o produto, retorna 404 Not Found
+            if (produtoId == null)
+            {
+                return NotFound("Produto nao encontrado.");
+            }
+
+            // Retorna o produto encontrado com resposta HTTP 200
+            return Ok(produtoId);
+        }
+
+
+
+
+
+
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
-        // POST: Produto
         [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
         public ActionResult<Produto> Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
         {
@@ -49,5 +74,42 @@ namespace CadastroProdutoMySQL.Controllers
             return CreatedAtAction(nameof(GetTodos), new { id = novoProduto.Id }, novoProduto);
 
         }
+
+
+
+
+
+
+        // METODO PRA RECEBER UM PRODUTO DO BANCO E ATUALIZA-LO
+        [HttpPut("{id}")] // Define que esse metodo responde a requisçoes PUT com id na rota
+        public IActionResult Atualizar(int id, [FromBody] Produto produtoAtualizado)
+        {
+            // Verifica se o objeto recebido é nulo
+            if (produtoAtualizado == null)
+            {
+                // Retorna erro 400 Bad Request se vier nulo
+                return BadRequest("Dados invalidos. ");
+            }
+
+            // Verifica se o ID passado na URL é igual ao ID do objeto recebido
+            if (id != produtoAtualizado.Id)
+            {
+                // Retorna erro 400 Bad Request se IDs nao baterem
+                return BadRequest("ID da URL diferente do ID do produto enviado.");
+            }
+
+            // Chama metodo para atualizar o produto no banco de dados
+            bool atualizadoComSucesso = _operacoes.AtualizarProduto(produtoAtualizado);
+
+            // Verifica se a atualizaçao ocorreu (ou seja, o produto existia)
+            if (!atualizadoComSucesso)
+            {
+                // Retorna erro 404 Not Found se o produto nao existir
+                return NotFound("Produt nao encontrado.");
+            }
+
+            return NoContent(); // Retorna 204 - indica atualizaçao feita com sucesso
+
+        }   
     }
 }
