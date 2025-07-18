@@ -1,6 +1,7 @@
 ﻿using System;
 using CadastroProdutoMySQL.Modelos;
 using Microsoft.AspNetCore.Mvc;
+using MySql.Data.MySqlClient;
 
 namespace CadastroProdutoMySQL.Servicos
 {
