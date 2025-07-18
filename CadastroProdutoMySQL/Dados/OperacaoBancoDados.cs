@@ -66,6 +66,57 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
+        // METODO PARA LER PELO ID UM PRODUTO NO BANCO DE DADOS E RETORNA-LO EM UMA LISTA
+        public Produto BuscarProdutoId(int id)
+        {
+            // Cria um novo objeto Produto
+            Produto produtoEncontrado = null;
+
+            // Define uma linha de conexao com o banco de dados
+            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+
+            // Cria um objeto de conexao com o banco usando a string acima
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexao com banco
+                conn.Open();
+
+                // Define o comando SQL para buscar o produto
+                string sql = "SELECT * FROM produtos WHERE Id = @Id";
+
+                // Cria um comando SQL a partir da conexão aberta e do texto SQL
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    // Adiciona o parametro @Id
+                    cmd.Parameters.AddWithValue("@Id", id);
+
+                    // Executa o comando SQL e cria um leitor de dados (DataReader)
+                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        // Se houver um resultado
+                        if (reader.Read())
+                        {
+                            // Cria o objeto Produto e preenche os campos
+                            produtoEncontrado = new Produto()
+                            {
+                                // Lê o campo Id e atribui ao produto
+                                Id = reader.GetInt32("Id"),
+                                // Le o campo Nome e atribui ao produto
+                                Nome = reader.GetString("Nome"),
+                                // Le o campo Preco e atribui ao produto
+                                Preco = reader.GetDecimal("Preco")
+                            };
+                        }
+                    }
+                }
+
+                // Retorna o produto encontrado (ou null se nao existir)
+                return produtoEncontrado;
+            }
+        }
+
+
+
 
 
         // METODO - POST - PRA INSERIR UM PRODUTO NO BANCO DE DADOS
@@ -99,5 +150,44 @@ namespace CadastroProdutoMySQL.Dados
                 // Fecha atomaticamente a conexao ao sair do bloco using
             }
         }
+
+
+
+        // METODO - PUT - PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
+        public bool AtualizarProduto(Produto produtoAtualizado)
+        {
+            // Define uma linha de conexao com o banco de dados
+            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+
+            // Variavel para armazenas o numero de linhas afetadas
+            int linhasAfetadas = 0;
+
+            // Cria um objeto de conexão com o banco usando a string acima
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexão com o banco
+                conn.Open();
+
+                // Cria o comando SQL UPDATE com parametros
+                string sql = "UPDATE produtos SET Nome = @Nome, Preco = @Preco WHERE Id = @Id";
+
+                // Cria um comando SQL a partir da conexao aberta e do texto SQL
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    // Adiciona os parametros com seus respectivos valores
+                    cmd.Parameters.AddWithValue("@Nome", produtoAtualizado.Nome);
+                    cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
+                    cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id);
+
+                    // Executa o comando no banco e armazena quantas linhas foram afetadas
+                    linhasAfetadas = cmd.ExecuteNonQuery();
+                }
+            }
+
+            // Se ao menos uma linha foi afetada, significa que a atualizaçao ocorreu
+            return linhasAfetadas > 0;
+        }
     }
 }
+
+
