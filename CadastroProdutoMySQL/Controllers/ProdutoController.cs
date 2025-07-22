@@ -40,9 +40,9 @@ namespace CadastroProdutoMySQL.Controllers
 
 
         // METODO PARA LER E LISTAR UM PRODUTO SELECIONADO PELO ID
-        [HttpGet("{id}")]
+        [HttpGet("{id}")] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes GET ID - BUSCA
         public ActionResult<Produto> GetPorId(int id)
-        {    
+        {
             // Busca o produto pelo ID no banco de dados
             Produto produtoId = _operacoes.BuscarProdutoId(id);
 
@@ -60,10 +60,10 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
         [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
-        public ActionResult<Produto> Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
+        public IActionResult Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
+
         {
             int id = novoProduto.Id;
 
@@ -79,9 +79,8 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
         // METODO PRA RECEBER UM PRODUTO DO BANCO E ATUALIZA-LO
-        [HttpPut("{id}")] // Define que esse metodo responde a requisçoes PUT com id na rota
+        [HttpPut("{id}")] // Diz ao ASP.NET Core que esse metodo responde a requisçoes PUT com id na rota
         public IActionResult Atualizar(int id, [FromBody] Produto produtoAtualizado)
         {
             // Verifica se o objeto recebido é nulo
@@ -109,7 +108,25 @@ namespace CadastroProdutoMySQL.Controllers
             }
 
             return NoContent(); // Retorna 204 - indica atualizaçao feita com sucesso
+        }
 
-        }   
+
+
+        // METORO QUE DELETA UM PRODUTO DO BANCO DE DADOS
+        [HttpDelete("{id}")] // Diz ao ASP.NET Core que esse metodo responde a requisiçoes do tipo DELETE com id na roda
+        public IActionResult DeletarProduto(int id)
+        {
+            // Verifica se o objeto recebido é nulo
+            if (id == null)
+            {
+                // Retorna erro 400 Bad Request se vier nulo
+                return BadRequest("Dados invalidos. ");
+            }
+
+            bool deletadoComSucesso = _operacoes.DeletarProduto(id);
+
+            return NoContent();
+        }
     }
 }
+
