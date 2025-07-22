@@ -1,4 +1,6 @@
-﻿namespace CadastroProdutoMySQL.Modelos
+﻿using MySql.Data.MySqlClient;
+
+namespace CadastroProdutoMySQL.Modelos
 {
     public class Estoque
     {

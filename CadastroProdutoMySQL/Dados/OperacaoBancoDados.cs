@@ -153,13 +153,15 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-        // METODO - PUT - PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
+
+
+        // METODO - UPDATE - PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
         public bool AtualizarProduto(Produto produtoAtualizado)
         {
             // Define uma linha de conexao com o banco de dados
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
 
-            // Variavel para armazenas o numero de linhas afetadas
+            // Variavel para armazenar o numero de linhas afetadas
             int linhasAfetadas = 0;
 
             // Cria um objeto de conexão com o banco usando a string acima
@@ -186,6 +188,39 @@ namespace CadastroProdutoMySQL.Dados
 
             // Se ao menos uma linha foi afetada, significa que a atualizaçao ocorreu
             return linhasAfetadas > 0;
+        }
+
+
+
+
+        // METODO - DELETE -  PARA DELETAR UM PRODUTO NO BANCO DE DADOS
+        public bool DeletarProduto(int id)
+        {
+            // Define uma linha de conexao com o banco de dados
+            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+
+            // Cria um objeto de conexão com o banco usando a string acima
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexão com o banco
+                conn.Open();
+
+                // Cria o comando SQL DELETE
+                string sql = "DELETE FROM produtos WHERE Id = @Id";
+
+                // Cria um comando SQL a partir da conexao aberta e do texto SQL
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    // Adiciona o parametro @Id e define seu valor como o id recebido no metodo
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    // Executa a instruçao DELETE e armazena quantas linhas foram afetadas
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    // Retorna true se deletou algo, false se não encontrou nada
+                    return rowsAffected > 0;
+                }
+            }
         }
     }
 }
