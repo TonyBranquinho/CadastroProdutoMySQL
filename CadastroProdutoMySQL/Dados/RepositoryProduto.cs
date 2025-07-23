@@ -3,7 +3,7 @@ using MySql.Data.MySqlClient; // Importa o namespace do driver MySql.Data
 
 namespace CadastroProdutoMySQL.Dados
 {
-    public class OperacaoBancoDados
+    public class RepositoryProduto
     {
 
 
