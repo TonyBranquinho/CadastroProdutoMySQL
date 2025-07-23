@@ -12,13 +12,13 @@ namespace CadastroProdutoMySQL.Controllers
     {
 
         // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
-        private readonly OperacaoBancoDados _operacoes;
+        private readonly RepositoryProduto _operacoes;
 
 
         // Construtor que inicializa a OperacaoBancoDados
         public ProdutoController()
         {
-            _operacoes = new OperacaoBancoDados();
+            _operacoes = new RepositoryProduto();
         }
 
 
@@ -112,9 +112,12 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-        // METORO QUE DELETA UM PRODUTO DO BANCO DE DADOS
+
+
+
+        // METODO QUE DELETA UM PRODUTO DO BANCO DE DADOS
         [HttpDelete("{id}")] // Diz ao ASP.NET Core que esse metodo responde a requisiçoes do tipo DELETE com id na roda
-        public IActionResult DeletarProduto(int id)
+        public IActionResult DeletarPorId(int id)
         {
             // Verifica se o objeto recebido é nulo
             if (id == null)
@@ -123,8 +126,10 @@ namespace CadastroProdutoMySQL.Controllers
                 return BadRequest("Dados invalidos. ");
             }
 
+            // Chama o metodo DeletarProduto
             bool deletadoComSucesso = _operacoes.DeletarProduto(id);
 
+            // Metodo do ASP.NET Core que retorna status HTTP 204 que indica o sucesso da requisicao
             return NoContent();
         }
     }
