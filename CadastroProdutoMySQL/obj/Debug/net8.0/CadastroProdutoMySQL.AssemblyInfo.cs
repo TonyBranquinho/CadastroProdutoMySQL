@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CadastroProdutoMySQL")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+90d85337f62ff5ed79ad73dd6cb0ed94c1591c90")]
 [assembly: System.Reflection.AssemblyProductAttribute("CadastroProdutoMySQL")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CadastroProdutoMySQL")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
