@@ -15,7 +15,7 @@ namespace CadastroProdutoMySQL.Controllers
         private readonly RepositoryProduto _operacoes;
 
 
-        // Construtor que inicializa a OperacaoBancoDados
+        // Construtor que inicializa a classe
         public ProdutoController()
         {
             _operacoes = new RepositoryProduto();
@@ -65,14 +65,11 @@ namespace CadastroProdutoMySQL.Controllers
         public IActionResult Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
 
         {
-            int id = novoProduto.Id;
-
             // Adiciona o novo produto na lista
             _operacoes.InserirProduto(novoProduto);
 
-            // Retorna o novo produto com status 201 Created
+            // Facilita a vida do FRONTEND
             return CreatedAtAction(nameof(GetTodos), new { id = novoProduto.Id }, novoProduto);
-
         }
 
 
@@ -128,6 +125,12 @@ namespace CadastroProdutoMySQL.Controllers
 
             // Chama o metodo DeletarProduto
             bool deletadoComSucesso = _operacoes.DeletarProduto(id);
+
+            // Testa se o produto foi deletado
+            if (!deletadoComSucesso)
+            {
+                return NotFound("Nao encontrei esse produto");
+            }
 
             // Metodo do ASP.NET Core que retorna status HTTP 204 que indica o sucesso da requisicao
             return NoContent();
