@@ -40,7 +40,7 @@ namespace CadastroProdutoMySQL.Dados
                             // Le o campo Id
                             c.Id = reader.GetInt32("Id");
                             // Le o campo Nome
-                            c.Nome = reader.GetString("Name");
+                            c.Nome = reader.GetString("Nome");
 
                             listaCategoria.Add(c);
                         }
