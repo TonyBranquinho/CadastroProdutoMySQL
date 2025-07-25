@@ -29,11 +29,11 @@ namespace CadastroProdutoMySQL.Dados
                 string sql = "SELECT * FROM produtos";
 
 
-                // Cria um comando SQL a partir da conexão aberta e do texto SQL
+                // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
 
-                    // Executa o comando SQL e cria um leitor de dados (DataReader)
+                    // Executa a consulta e retornar um leitor que percorre os resultados
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
 
