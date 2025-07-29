@@ -1,12 +1,21 @@
 ﻿using CadastroProdutoMySQL.Modelos;
-using MySql.Data.MySqlClient; // Importa o namespace do driver MySql.Data
+using MySql.Data.MySqlClient;
+using System.Data; // Importa o namespace do driver MySql.Data
 
 namespace CadastroProdutoMySQL.Dados
 {
     public class RepositoryProduto
     {
 
+        private readonly RepositoryCategoria _repositoryCategoria;
+        private readonly RepositoryEstoque _repositoryEstoque;
 
+        // Construtor que inicializa a classe
+        public RepositoryProduto()
+        {
+            _repositoryCategoria = new RepositoryCategoria();
+            _repositoryEstoque = new RepositoryEstoque();
+        }
 
 
         // METODO PRA LER OS DADOS NO BANCO DE DADOS E RETORNAR UMA LISTA
@@ -52,7 +61,17 @@ namespace CadastroProdutoMySQL.Dados
                             // Lê o campo Preco (tipo Decimal) e atribui ao produto
                             p.Preco = reader.GetDecimal("Preco");
 
+                            // Lê o campo CategoriaId e atribui ao produto mas tambem atribui 0 se o valor for nulo
+                            p.CategoriaId = reader.IsDBNull("CategoriaId") ? 0 : reader.GetInt32("CategoriaId");
+                            p.EstoqueId = reader.IsDBNull("EstoqueId") ? 0 : reader.GetInt32("EstoqueId");
+
+                             
+                            // Busca dados complementares do produto nas respectivas tabelas
+                            p.Categoria = _repositoryCategoria.ListarCategoriaId(p.CategoriaId);
+                            p.Estoque = _repositoryEstoque.BuscaEstoqueId(p.EstoqueId);
+
                             listaProdutos.Add(p);
+
                         }
                     }
                 }
