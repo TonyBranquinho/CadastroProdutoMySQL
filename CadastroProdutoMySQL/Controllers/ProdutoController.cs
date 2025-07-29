@@ -13,12 +13,14 @@ namespace CadastroProdutoMySQL.Controllers
 
         // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
         private readonly RepositoryProduto _operacoes;
+        
 
 
         // Construtor que inicializa a classe
         public ProdutoController()
         {
             _operacoes = new RepositoryProduto();
+            
         }
 
 

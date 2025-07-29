@@ -10,7 +10,7 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PARA LISTAR TODAS AS CATEGORIAS DE PRODUTOS
         public List<Categoria> ListarCategoria()
         {
-            // Cria uma lista para armazenas as categorias de produtos recuperadas do banco de dados
+            // Cria uma lista para armazenar as categorias de produtos recuperadas do banco de dados
             List<Categoria> listaCategoria = new List<Categoria>();
 
             // Define uma linha de conexão com o banco de dados
@@ -87,7 +87,7 @@ namespace CadastroProdutoMySQL.Dados
                             categoriaEncontrada = new Categoria();
 
                             categoriaEncontrada.Id = reader.GetInt32("Id");
-                            categoriaEncontrada.Nome = reader.GetString("Name");
+                            categoriaEncontrada.Nome = reader.GetString("Nome");
                         }
                     }
                 }
