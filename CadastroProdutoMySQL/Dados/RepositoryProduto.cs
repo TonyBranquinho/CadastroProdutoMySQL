@@ -65,7 +65,7 @@ namespace CadastroProdutoMySQL.Dados
                             p.CategoriaId = reader.IsDBNull("CategoriaId") ? 0 : reader.GetInt32("CategoriaId");
                             p.EstoqueId = reader.IsDBNull("EstoqueId") ? 0 : reader.GetInt32("EstoqueId");
 
-                             
+
                             // Busca dados complementares do produto nas respectivas tabelas
                             p.Categoria = _repositoryCategoria.ListarCategoriaId(p.CategoriaId);
                             p.Estoque = _repositoryEstoque.BuscaEstoqueId(p.EstoqueId);
@@ -89,7 +89,7 @@ namespace CadastroProdutoMySQL.Dados
         public Produto BuscarProdutoId(int id)
         {
             // Cria um novo objeto Produto
-            Produto produtoEncontrado = null;
+            Produto pE = null;
 
             // Define uma linha de conexao com o banco de dados
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
@@ -116,21 +116,28 @@ namespace CadastroProdutoMySQL.Dados
                         if (reader.Read())
                         {
                             // Cria o objeto Produto e preenche os campos
-                            produtoEncontrado = new Produto()
-                            {
-                                // Lê o campo Id e atribui ao produto
-                                Id = reader.GetInt32("Id"),
-                                // Le o campo Nome e atribui ao produto
-                                Nome = reader.GetString("Nome"),
-                                // Le o campo Preco e atribui ao produto
-                                Preco = reader.GetDecimal("Preco")
-                            };
+                            pE = new Produto();
+
+                            // Lê o campo Id e atribui ao produto
+                            pE.Id = reader.GetInt32("Id");
+                            // Le o campo Nome e atribui ao produto
+                            pE.Nome = reader.GetString("Nome");
+                            // Le o campo Preco e atribui ao produto
+                            pE.Preco = reader.GetDecimal("Preco");
+
+                            pE.CategoriaId = reader.GetInt32("CategoriaId");
+                            pE.EstoqueId = reader.GetInt32("EstoqueId");
+
+                            // Busca dados complementares do produto nas respectvas tabelas
+                            pE.Categoria = _repositoryCategoria.ListarCategoriaId(pE.CategoriaId);
+                            pE.Estoque = _repositoryEstoque.BuscaEstoqueId(pE.EstoqueId);
                         }
                     }
+
                 }
 
                 // Retorna o produto encontrado (ou null se nao existir)
-                return produtoEncontrado;
+                return pE;
             }
         }
 
