@@ -1,12 +1,22 @@
-﻿using CadastroProdutoMySQL.Modelos;
-using MySql.Data.MySqlClient; // Importa o namespace do driver MySql.Data
+﻿using CadastroProdutoMySQL.DTOs;
+using CadastroProdutoMySQL.Modelos;
+using MySql.Data.MySqlClient;
+using System.Data; // Importa o namespace do driver MySql.Data
 
 namespace CadastroProdutoMySQL.Dados
 {
     public class RepositoryProduto
     {
 
+        private readonly RepositoryCategoria _repositoryCategoria;
+        private readonly RepositoryEstoque _repositoryEstoque;
 
+        // Construtor que inicializa a classe
+        public RepositoryProduto()
+        {
+            _repositoryCategoria = new RepositoryCategoria();
+            _repositoryEstoque = new RepositoryEstoque();
+        }
 
 
         // METODO PRA LER OS DADOS NO BANCO DE DADOS E RETORNAR UMA LISTA
@@ -29,11 +39,11 @@ namespace CadastroProdutoMySQL.Dados
                 string sql = "SELECT * FROM produtos";
 
 
-                // Cria um comando SQL a partir da conexão aberta e do texto SQL
+                // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
 
-                    // Executa o comando SQL e cria um leitor de dados (DataReader)
+                    // Executa a consulta e retornar um leitor que percorre os resultados
                     using (MySqlDataReader reader = cmd.ExecuteReader())
                     {
 
@@ -52,7 +62,17 @@ namespace CadastroProdutoMySQL.Dados
                             // Lê o campo Preco (tipo Decimal) e atribui ao produto
                             p.Preco = reader.GetDecimal("Preco");
 
+                            // Lê o campo CategoriaId e atribui ao produto mas tambem atribui 0 se o valor for nulo
+                            p.CategoriaId = reader.IsDBNull("CategoriaId") ? 0 : reader.GetInt32("CategoriaId");
+                            p.EstoqueId = reader.IsDBNull("EstoqueId") ? 0 : reader.GetInt32("EstoqueId");
+
+
+                            // Busca dados complementares do produto nas respectivas tabelas
+                            p.Categoria = _repositoryCategoria.ListarCategoriaId(p.CategoriaId);
+                            p.Estoque = _repositoryEstoque.BuscaEstoqueId(p.EstoqueId);
+
                             listaProdutos.Add(p);
+
                         }
                     }
                 }
@@ -67,10 +87,15 @@ namespace CadastroProdutoMySQL.Dados
 
 
         // METODO PARA LER PELO ID UM PRODUTO NO BANCO DE DADOS E RETORNA-LO EM UMA LISTA
-        public Produto BuscarProdutoId(int id)
+        public ProdutoDetalhadoDTO BuscarProdutoId(int id)
         {
-            // Cria um novo objeto Produto
-            Produto produtoEncontrado = null;
+            // Cria um novo objeto DTO para imprimir de maneira organizada
+            ProdutoDetalhadoDTO dto = null;
+
+            // Cria o objeto os objetos para atribuir os dados de outras tabelas
+            Categoria categoria = null;
+            Estoque estoque = null;
+
 
             // Define uma linha de conexao com o banco de dados
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
@@ -81,8 +106,15 @@ namespace CadastroProdutoMySQL.Dados
                 // Abre a conexao com banco
                 conn.Open();
 
-                // Define o comando SQL para buscar o produto
-                string sql = "SELECT * FROM produtos WHERE Id = @Id";
+                // Define o comando SQL para buscar o produto usando JOIN
+                string sql = "SELECT " +
+                                "p.Id, p.Nome, p.Preco, " +
+                                "p.CategoriaId, c.Nome AS CategoriaNome, " +
+                                "p.EstoqueId, e.Quantidade " +
+                             "FROM produtos p " +
+                             "JOIN categoria c ON p.CategoriaId = c.Id " +
+                             "JOIN estoque e ON p.EstoqueId = e.Id " +
+                             "WHERE p.Id = @Id";
 
                 // Cria um comando SQL a partir da conexão aberta e do texto SQL
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
@@ -96,22 +128,21 @@ namespace CadastroProdutoMySQL.Dados
                         // Se houver um resultado
                         if (reader.Read())
                         {
-                            // Cria o objeto Produto e preenche os campos
-                            produtoEncontrado = new Produto()
-                            {
-                                // Lê o campo Id e atribui ao produto
-                                Id = reader.GetInt32("Id"),
-                                // Le o campo Nome e atribui ao produto
-                                Nome = reader.GetString("Nome"),
-                                // Le o campo Preco e atribui ao produto
-                                Preco = reader.GetDecimal("Preco")
-                            };
+                            // Instancia DTO para a impressao organizada
+                            dto = new ProdutoDetalhadoDTO();
+
+                            dto.Id = reader.GetInt32("Id");
+                            dto.Nome = reader.GetString("Nome");
+                            dto.Preco = reader.GetDecimal("Preco");               
+                            dto.Categoria = reader.GetString("CategoriaNome");
+                            dto.Quantidade = reader.GetInt32("Quantidade");
                         }
                     }
+                    
                 }
 
                 // Retorna o produto encontrado (ou null se nao existir)
-                return produtoEncontrado;
+                return dto;
             }
         }
 
@@ -224,5 +255,3 @@ namespace CadastroProdutoMySQL.Dados
         }
     }
 }
-
-

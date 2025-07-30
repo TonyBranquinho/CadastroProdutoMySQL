@@ -1,4 +1,5 @@
 ﻿using CadastroProdutoMySQL.Dados;
+using CadastroProdutoMySQL.DTOs;
 using CadastroProdutoMySQL.Modelos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc; // Importa atributos e tipos relacionados a API
@@ -14,11 +15,14 @@ namespace CadastroProdutoMySQL.Controllers
         // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
         private readonly RepositoryProduto _operacoes;
 
+        
 
-        // Construtor que inicializa a OperacaoBancoDados
+
+        // Construtor que inicializa a classe
         public ProdutoController()
         {
             _operacoes = new RepositoryProduto();
+            
         }
 
 
@@ -44,7 +48,7 @@ namespace CadastroProdutoMySQL.Controllers
         public ActionResult<Produto> GetPorId(int id)
         {
             // Busca o produto pelo ID no banco de dados
-            Produto produtoId = _operacoes.BuscarProdutoId(id);
+            ProdutoDetalhadoDTO produtoId = _operacoes.BuscarProdutoId(id);
 
             // Se nao encontrar o produto, retorna 404 Not Found
             if (produtoId == null)
@@ -65,14 +69,11 @@ namespace CadastroProdutoMySQL.Controllers
         public IActionResult Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
 
         {
-            int id = novoProduto.Id;
-
             // Adiciona o novo produto na lista
             _operacoes.InserirProduto(novoProduto);
 
-            // Retorna o novo produto com status 201 Created
+            // Facilita a vida do FRONTEND
             return CreatedAtAction(nameof(GetTodos), new { id = novoProduto.Id }, novoProduto);
-
         }
 
 
@@ -128,6 +129,12 @@ namespace CadastroProdutoMySQL.Controllers
 
             // Chama o metodo DeletarProduto
             bool deletadoComSucesso = _operacoes.DeletarProduto(id);
+
+            // Testa se o produto foi deletado
+            if (!deletadoComSucesso)
+            {
+                return NotFound("Nao encontrei esse produto");
+            }
 
             // Metodo do ASP.NET Core que retorna status HTTP 204 que indica o sucesso da requisicao
             return NoContent();
