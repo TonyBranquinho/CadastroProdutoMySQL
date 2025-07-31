@@ -30,10 +30,10 @@ namespace CadastroProdutoMySQL.Controllers
 
         // METODO PARA LER E LISTAR TODOS OS PRODUTOS DO BANCO DE DADOS
         [HttpGet]
-        public ActionResult<List<Produto>> GetTodos()
+        public ActionResult<List<ProdutoDetalhadoDTO>> GetTodos()
         {
             // Chama o metodo que retorna os produtos
-            List<Produto> listaProdutos = _operacoes.ListarProdutos();
+            List<ProdutoDetalhadoDTO> listaProdutos = _operacoes.ListarProdutos();
 
             // Retorna a lista como resposta HTTP 200
             return Ok(listaProdutos);

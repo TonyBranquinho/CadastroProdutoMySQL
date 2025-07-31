@@ -20,10 +20,10 @@ namespace CadastroProdutoMySQL.Dados
 
 
         // METODO PRA LER OS DADOS NO BANCO DE DADOS E RETORNAR UMA LISTA
-        public List<Produto> ListarProdutos()
+        public List<ProdutoDetalhadoDTO> ListarProdutos()
         {
             // Cria uma lsita pra armazenas os produtos recuperados do banco
-            List<Produto> listaProdutos = new List<Produto>();
+            List<ProdutoDetalhadoDTO> listaProdutosDTO = new List<ProdutoDetalhadoDTO>();
 
             // Define uma linha de conexao com o banco de dados
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
@@ -36,7 +36,13 @@ namespace CadastroProdutoMySQL.Dados
                 conn.Open();
 
                 // Define o comando SQL para buscar todos os produtos
-                string sql = "SELECT * FROM produtos";
+                string sql = "SELECT " +
+                                "p.Id, p.Nome, p.Preco, " +
+                                "p.CategoriaId, p.EstoqueId, " +
+                                "c.Nome AS NomeCategoria, e.Quantidade " +
+                                "FROM produtos p " +
+                                "JOIN Categoria c ON p.CategoriaId = c.Id " +
+                                "JOIN Estoque e ON p.EstoqueId = e.Id";
 
 
                 // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
@@ -51,34 +57,22 @@ namespace CadastroProdutoMySQL.Dados
                         while (reader.Read())
                         {
                             // Cria um novo objeto Produto
-                            Produto p = new Produto();
+                            ProdutoDetalhadoDTO dto = new ProdutoDetalhadoDTO();
 
-                            // Lê o campo Id (tipo INT) e atribui ao produto
-                            p.Id = reader.GetInt32("Id");
+                            dto.Id = reader.GetInt32("Id");
+                            dto.Nome = reader.GetString("Nome");
+                            dto.Preco = reader.GetDecimal("Preco");
+                            dto.Categoria = reader.GetString("NomeCategoria");
+                            dto.Quantidade = reader.GetInt32("Quantidade");
 
-                            // Lê o campo Nome (tipo VARCHAR) e atribui ao produto
-                            p.Nome = reader.GetString("Nome");
-
-                            // Lê o campo Preco (tipo Decimal) e atribui ao produto
-                            p.Preco = reader.GetDecimal("Preco");
-
-                            // Lê o campo CategoriaId e atribui ao produto mas tambem atribui 0 se o valor for nulo
-                            p.CategoriaId = reader.IsDBNull("CategoriaId") ? 0 : reader.GetInt32("CategoriaId");
-                            p.EstoqueId = reader.IsDBNull("EstoqueId") ? 0 : reader.GetInt32("EstoqueId");
-
-
-                            // Busca dados complementares do produto nas respectivas tabelas
-                            p.Categoria = _repositoryCategoria.ListarCategoriaId(p.CategoriaId);
-                            p.Estoque = _repositoryEstoque.BuscaEstoqueId(p.EstoqueId);
-
-                            listaProdutos.Add(p);
+                            listaProdutosDTO.Add(dto);
 
                         }
                     }
                 }
 
                 // Retorna a lista de produtos preenchida
-                return listaProdutos;
+                return listaProdutosDTO;
             }
         }
 
