@@ -2,20 +2,22 @@
 using CadastroProdutoMySQL.Modelos;
 using MySql.Data.MySqlClient;
 using System.Data; // Importa o namespace do driver MySql.Data
+using Microsoft.Extensions.Configuration; // Importa o namespace necessario para Iconfiguration funcionar
 
 namespace CadastroProdutoMySQL.Dados
 {
     public class RepositoryProduto
     {
+        // Declara um campo privado para armazenar a configuraçao recebida - privado/somente leitura/interface/campo
+        private readonly IConfiguration _configuration;
 
-        private readonly RepositoryCategoria _repositoryCategoria;
-        private readonly RepositoryEstoque _repositoryEstoque;
+        
+        // Construtor que inicializa os campos e recebe Iconfiguration por injeçao de dependecia
+        public RepositoryProduto(IConfiguration configuration)
+        {   
+            // Armazena o Iconfiguration recebido no campo privado para uso posterior
+            _configuration = configuration;   // Inicializa
 
-        // Construtor que inicializa a classe
-        public RepositoryProduto()
-        {
-            _repositoryCategoria = new RepositoryCategoria();
-            _repositoryEstoque = new RepositoryEstoque();
         }
 
 
@@ -26,7 +28,7 @@ namespace CadastroProdutoMySQL.Dados
             List<ProdutoDetalhadoDTO> listaProdutosDTO = new List<ProdutoDetalhadoDTO>();
 
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
 
             // Cria um objeto de conexão com o banco usando a string acima
