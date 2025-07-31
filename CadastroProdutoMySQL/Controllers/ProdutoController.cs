@@ -1,4 +1,5 @@
 ﻿using CadastroProdutoMySQL.Dados;
+using CadastroProdutoMySQL.DTOs;
 using CadastroProdutoMySQL.Modelos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc; // Importa atributos e tipos relacionados a API
@@ -13,6 +14,7 @@ namespace CadastroProdutoMySQL.Controllers
 
         // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
         private readonly RepositoryProduto _operacoes;
+
         
 
 
@@ -46,7 +48,7 @@ namespace CadastroProdutoMySQL.Controllers
         public ActionResult<Produto> GetPorId(int id)
         {
             // Busca o produto pelo ID no banco de dados
-            Produto produtoId = _operacoes.BuscarProdutoId(id);
+            ProdutoDetalhadoDTO produtoId = _operacoes.BuscarProdutoId(id);
 
             // Se nao encontrar o produto, retorna 404 Not Found
             if (produtoId == null)
