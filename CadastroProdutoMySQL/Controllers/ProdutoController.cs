@@ -96,6 +96,9 @@ namespace CadastroProdutoMySQL.Controllers
 
 
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
+        // Esse metodo aplica "separaçao de contexto": - ENTRADA ProdutoCriacaoDTO DTO
+        ////////////////////////////////////////////// - PERSISTENCIA Produto novoProduto
+        ////////////////////////////////////////////// - SAIDA ProdutoRespostaDTO
         [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
         public IActionResult Cadastrar([FromBody] ProdutoCriacaoDTO DTO) // Metodo que retorna o novo objeto
         {
@@ -119,9 +122,19 @@ namespace CadastroProdutoMySQL.Controllers
             // Chama o metodo que adiciona o novo produto no Banco de Dados
             _operacoes.InserirProduto(novoProduto);
 
+
+            // Cria um objeto ProdutoRespostaDTO com os dados que voltar para o cliente
+            // isso evita expor propriedades desnecessarias e ou sensiveis do produto
+            ProdutoRespostaDTO respostaDTO = new ProdutoRespostaDTO
+            {
+                Id = novoProduto.Id,
+                Nome = novoProduto.Nome,
+                Preco = novoProduto.Preco,
+            };
+
             // Facilita a vida do FRONTEND,
             // retornar 201 Created com URL do nvo recurso.
-            return CreatedAtAction(nameof(GetTodos), new { id = novoProduto.Id }, novoProduto);
+            return CreatedAtAction(nameof(GetTodos), new { id = respostaDTO.Id }, respostaDTO);
         }
 
 
