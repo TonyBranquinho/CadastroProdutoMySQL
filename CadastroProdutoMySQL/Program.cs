@@ -22,7 +22,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-var op = new CadastroProdutoMySQL.Dados.RepositoryProduto();
+var op = new CadastroProdutoMySQL.Dados.RepositoryProduto(builder.Configuration);
 op.ListarProdutos();
 
 app.Run();
