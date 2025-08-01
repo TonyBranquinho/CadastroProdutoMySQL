@@ -64,17 +64,92 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
         [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
-        public IActionResult Cadastrar([FromBody] Produto novoProduto) // Metodo que retorna o novo objeto
-
+        public IActionResult Cadastrar([FromBody] ProdutoCriacaoDTO DTO) // Metodo que retorna o novo objeto
         {
-            // Adiciona o novo produto na lista
+            // Verifica se os dados enviados passaram nas avaliaçoes da classe ProdutoCriacaoDTO
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // Retorna BadRequest 400 com detalhes dos erros
+            }
+
+            // Mapeia o DTO para um Produto (modelo do dominio),
+            // recebe os dados tipo ProdutoCriacaoDTO, passa eles para o tipo Produto,
+            // para evitar exposiçao de campos indesejados (Mais segurança)
+            Produto novoProduto = new Produto
+            {
+                Nome = DTO.Nome,
+                Preco = DTO.Preco,
+                CategoriaId = DTO.CategoriaId,
+                EstoqueId = DTO.EstoqueId,
+            };
+
+            // Chama o metodo que adiciona o novo produto no Banco de Dados
             _operacoes.InserirProduto(novoProduto);
 
-            // Facilita a vida do FRONTEND
+            // Facilita a vida do FRONTEND,
+            // retornar 201 Created com URL do nvo recurso.
             return CreatedAtAction(nameof(GetTodos), new { id = novoProduto.Id }, novoProduto);
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

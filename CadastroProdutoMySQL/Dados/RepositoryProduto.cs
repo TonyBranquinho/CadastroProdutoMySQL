@@ -8,13 +8,14 @@ namespace CadastroProdutoMySQL.Dados
 {
     public class RepositoryProduto
     {
-        // Declara um campo privado para armazenar a configuraçao recebida - privado/somente leitura/interface/campo
+        // Declara um campo privado para armazenar a configuraçao recebida,
+        // privado/somente leitura/interface/campo
         private readonly IConfiguration _configuration;
 
-        
+
         // Construtor que inicializa os campos e recebe Iconfiguration por injeçao de dependecia
         public RepositoryProduto(IConfiguration configuration)
-        {   
+        {
             // Armazena o Iconfiguration recebido no campo privado para uso posterior
             _configuration = configuration;   // Inicializa
 
@@ -88,13 +89,9 @@ namespace CadastroProdutoMySQL.Dados
             // Cria um novo objeto DTO para imprimir de maneira organizada
             ProdutoDetalhadoDTO dto = null;
 
-            // Cria o objeto os objetos para atribuir os dados de outras tabelas
-            Categoria categoria = null;
-            Estoque estoque = null;
-
 
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexao com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
@@ -129,12 +126,12 @@ namespace CadastroProdutoMySQL.Dados
 
                             dto.Id = reader.GetInt32("Id");
                             dto.Nome = reader.GetString("Nome");
-                            dto.Preco = reader.GetDecimal("Preco");               
+                            dto.Preco = reader.GetDecimal("Preco");
                             dto.Categoria = reader.GetString("CategoriaNome");
                             dto.Quantidade = reader.GetInt32("Quantidade");
                         }
                     }
-                    
+
                 }
 
                 // Retorna o produto encontrado (ou null se nao existir)
@@ -150,7 +147,11 @@ namespace CadastroProdutoMySQL.Dados
         public void InserirProduto(Produto novoProduto)
         {
             // Define uma linha de conexao com o banco de dados
+            // Mantive propositalmente essa linha, e nao a substitui pelo maneira feita nos metodos acima,
+            // com _configuration.GetConnectionString("ConexaoPadrao") para tambem ter um registro,
+            // de uma maneira alternativa, mesmo q nao recomendada em praticas no mercado.
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+
 
             // Cria um objeto de conexão com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
@@ -159,19 +160,42 @@ namespace CadastroProdutoMySQL.Dados
                 conn.Open();
 
                 // Cria o comando SQL INSERT com parametros pra evitar SQL Injection
-                string sql = "INSERT INTO produtos (Nome, Preco) VALUES (@Nome, @Preco)";
+                string sql = "INSERT INTO produtos (Nome, Preco) " +
+                             "VALUES (@Nome, @Preco)";
+
 
                 // Cria um comando SQL a partir da conexão aberta e do texto SQL
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
-                    // Adiciona o parametro @Nome e define o valor cindo do objeto novoProduto
+
+                    // Adiciona o parametro Nome e define o valor vindo do objeto novoProduto
                     cmd.Parameters.AddWithValue("@Nome", novoProduto.Nome);
 
-                    // Adiciona o parametro @Preco e define seu valor vindo do objeto novoProduto
+                    // Adiciona o parametro Preco e define seu valor vindo do objeto novoProduto
                     cmd.Parameters.AddWithValue("@Preco", novoProduto.Preco);
+
+                    // Adiciona o parametro CategoriaId e define seu valor vindo do objeto novoProduto
+                    cmd.Parameters.AddWithValue("CategoriaId", novoProduto.CategoriaId);
+
+                    // Adiciona o parametro EstoqueId e define seu valor vindo do objeto novoProduto
+                    cmd.Parameters.AddWithValue("EstoqueId", novoProduto.EstoqueId);
 
                     // Executa o comando no banco (nao retorna resultados, apenas executa)
                     cmd.ExecuteNonQuery();
+
+                }
+
+                // Cria um segundo comando sql para recuperar o ultimo id disponivel na lista
+                string sqlGetId = "SELECT LAST_INSERT_ID();";
+
+                using (var cmd = new MySqlCommand(sqlGetId, conn))
+                {
+
+                    // tipo / variavel / recupera o id gerado automaticamente polo banco 
+                    long novoId = Convert.ToInt64(cmd.ExecuteScalar());
+
+                    novoProduto.Id = novoId;
+
                 }
 
                 // Fecha atomaticamente a conexao ao sair do bloco using
@@ -186,6 +210,9 @@ namespace CadastroProdutoMySQL.Dados
         public bool AtualizarProduto(Produto produtoAtualizado)
         {
             // Define uma linha de conexao com o banco de dados
+            // Mantive propositalmente essa linha, e nao a substitui pelo maneira feita nos metodos acima,
+            // com _configuration.GetConnectionString("ConexaoPadrao") para tambem ter um registro,
+            // de uma maneira alternativa, mesmo q nao recomendada em praticas no mercado.
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
 
             // Variavel para armazenar o numero de linhas afetadas
@@ -224,7 +251,7 @@ namespace CadastroProdutoMySQL.Dados
         public bool DeletarProduto(int id)
         {
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexão com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))

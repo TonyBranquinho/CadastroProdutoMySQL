@@ -5,7 +5,7 @@ namespace CadastroProdutoMySQL.Modelos
     public class Produto
     {
         // Atributos da classe
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Nome { get; set; }
         public decimal Preco { get; set; }
 
@@ -22,7 +22,7 @@ namespace CadastroProdutoMySQL.Modelos
         }
 
         // Construtor com parametros
-        public Produto(int id, string nome, decimal preco, int categoriaId, int estoqueId)
+        public Produto(long id, string nome, decimal preco, int categoriaId, int estoqueId)
         {
             Id = id;
             Nome = nome;
