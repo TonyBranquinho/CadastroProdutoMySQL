@@ -147,7 +147,7 @@ namespace CadastroProdutoMySQL.Dados
         public void InserirProduto(Produto novoProduto)
         {
             // Define uma linha de conexao com o banco de dados
-            // Mantive propositalmente essa linha, e nao a substitui pelo maneira feita nos metodos acima,
+            // Mantive propositalmente essa linha, e nao a substitui pela maneira feita nos metodos acima,
             // com _configuration.GetConnectionString("ConexaoPadrao") para tambem ter um registro,
             // de uma maneira alternativa, mesmo q nao recomendada em praticas no mercado.
             string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
@@ -160,8 +160,8 @@ namespace CadastroProdutoMySQL.Dados
                 conn.Open();
 
                 // Cria o comando SQL INSERT com parametros pra evitar SQL Injection
-                string sql = "INSERT INTO produtos (Nome, Preco) " +
-                             "VALUES (@Nome, @Preco)";
+                string sql = "INSERT INTO produtos (Nome, Preco, CategoriaId, EstoqueId) " +
+                             "VALUES (@Nome, @Preco, @CategoriaId, @EstoqueId)";
 
 
                 // Cria um comando SQL a partir da conexão aberta e do texto SQL
@@ -175,10 +175,10 @@ namespace CadastroProdutoMySQL.Dados
                     cmd.Parameters.AddWithValue("@Preco", novoProduto.Preco);
 
                     // Adiciona o parametro CategoriaId e define seu valor vindo do objeto novoProduto
-                    cmd.Parameters.AddWithValue("CategoriaId", novoProduto.CategoriaId);
+                    cmd.Parameters.AddWithValue("@CategoriaId", novoProduto.CategoriaId);
 
                     // Adiciona o parametro EstoqueId e define seu valor vindo do objeto novoProduto
-                    cmd.Parameters.AddWithValue("EstoqueId", novoProduto.EstoqueId);
+                    cmd.Parameters.AddWithValue("@EstoqueId", novoProduto.EstoqueId);
 
                     // Executa o comando no banco (nao retorna resultados, apenas executa)
                     cmd.ExecuteNonQuery();

@@ -1,4 +1,6 @@
 ﻿using System;
+using CadastroProdutoMySQL.Dados;
+using CadastroProdutoMySQL.DTOs;
 using CadastroProdutoMySQL.Modelos;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
@@ -11,24 +13,76 @@ namespace CadastroProdutoMySQL.Servicos
         public List<Produto> produtos { get; private set; }
         public List<Estoque> estoque { get; private set; }
 
-        // Construtor vazio
-        public ProdutoServico() 
-        {
-        }
 
+        private readonly RepositoryProduto _repositoryProduto;
+
+        
+        
+
+        
         // Construtor com parametros
-        public ProdutoServico(List<Produto> produtos, List<Estoque> estoque)
+        public ProdutoServico(RepositoryProduto repositoryProduto)
         {
-            this.produtos = produtos;
-            this.estoque = estoque;
+            _repositoryProduto = repositoryProduto;
         }
 
 
-        // Metodo Cadastro - CREATE
-        public void CadastroProduto(Produto novoProduto)
+        // Metodo Cadastro - POST
+        public ProdutoRespostaDTO CadastroProduto(ProdutoCriacaoDTO DTO)
         {
-            produtos.Add(novoProduto);
+            // Mapeia o DTO para um Produto (modelo do dominio),
+            // recebe os dados tipo ProdutoCriacaoDTO, passa eles para o tipo Produto,
+            // para evitar exposiçao de campos indesejados (Mais segurança)
+            Produto novoProduto = new Produto
+            {
+                Nome = DTO.Nome,
+                Preco = DTO.Preco,
+                CategoriaId = DTO.CategoriaId,
+                EstoqueId = DTO.EstoqueId,
+            };
+
+            // Chama o metodo que adiciona o novo produto no Banco de Dados
+            _repositoryProduto.InserirProduto(novoProduto);
+
+
+            // Cria um objeto ProdutoRespostaDTO com os dados que voltam para o cliente
+            // isso evita expor propriedades desnecessarias e ou sensiveis do produto
+            ProdutoRespostaDTO respostaDTO = new ProdutoRespostaDTO
+            {
+                Id = novoProduto.Id,
+                Nome = novoProduto.Nome,
+                Preco = novoProduto.Preco,
+            };
+
+            return respostaDTO;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
         // Metodo Busca - READ
