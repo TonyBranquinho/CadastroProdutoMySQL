@@ -1,6 +1,7 @@
 ﻿using CadastroProdutoMySQL.Dados;
 using CadastroProdutoMySQL.DTOs;
 using CadastroProdutoMySQL.Modelos;
+using CadastroProdutoMySQL.Servicos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc; // Importa atributos e tipos relacionados a API
 
@@ -15,16 +16,15 @@ namespace CadastroProdutoMySQL.Controllers
         // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
         private readonly RepositoryProduto _operacoes;
 
-        
+        private readonly ProdutoServico _produtoServico;
 
-
-        // Construtor que inicializa a classe
-        public ProdutoController(IConfiguration configuration)
+        public ProdutoController(ProdutoServico produtoServico, RepositoryProduto operacoes)
         {
-            _operacoes = new RepositoryProduto(configuration);
-            
+            _produtoServico = produtoServico;
+            _operacoes = operacoes;
         }
 
+        
 
 
 
@@ -64,37 +64,6 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
         // Esse metodo aplica "separaçao de contexto": - ENTRADA ProdutoCriacaoDTO DTO
         ////////////////////////////////////////////// - PERSISTENCIA Produto novoProduto
@@ -108,29 +77,9 @@ namespace CadastroProdutoMySQL.Controllers
                 return BadRequest(ModelState); // Retorna BadRequest 400 com detalhes dos erros
             }
 
-            // Mapeia o DTO para um Produto (modelo do dominio),
-            // recebe os dados tipo ProdutoCriacaoDTO, passa eles para o tipo Produto,
-            // para evitar exposiçao de campos indesejados (Mais segurança)
-            Produto novoProduto = new Produto
-            {
-                Nome = DTO.Nome,
-                Preco = DTO.Preco,
-                CategoriaId = DTO.CategoriaId,
-                EstoqueId = DTO.EstoqueId,
-            };
-
-            // Chama o metodo que adiciona o novo produto no Banco de Dados
-            _operacoes.InserirProduto(novoProduto);
-
-
-            // Cria um objeto ProdutoRespostaDTO com os dados que voltar para o cliente
-            // isso evita expor propriedades desnecessarias e ou sensiveis do produto
-            ProdutoRespostaDTO respostaDTO = new ProdutoRespostaDTO
-            {
-                Id = novoProduto.Id,
-                Nome = novoProduto.Nome,
-                Preco = novoProduto.Preco,
-            };
+            // Chama o metodo CadastroProduto e manda os dados que foram descritos na ediçao
+            ProdutoRespostaDTO respostaDTO = _produtoServico.CadastroProduto(DTO);
+            
 
             // Facilita a vida do FRONTEND,
             // retornar 201 Created com URL do nvo recurso.
