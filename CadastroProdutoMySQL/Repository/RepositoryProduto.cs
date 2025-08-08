@@ -82,8 +82,7 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
-        // METODO PARA LER PELO ID UM PRODUTO NO BANCO DE DADOS E RETORNA-LO EM UMA LISTA
+        // METODO PARA LER PELO ID UM PRODUTO NO BANCO DE DADOS E RETORNA-LO
         public ProdutoDetalhadoDTO BuscarProdutoId(int id)
         {
             // Cria um novo objeto DTO para imprimir de maneira organizada
@@ -142,16 +141,11 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
-        // METODO - POST - PRA INSERIR UM PRODUTO NO BANCO DE DADOS
+        // METODO PRA INSERIR UM PRODUTO NO BANCO DE DADOS
         public void InserirProduto(Produto novoProduto)
         {
             // Define uma linha de conexao com o banco de dados
-            // Mantive propositalmente essa linha, e nao a substitui pela maneira feita nos metodos acima,
-            // com _configuration.GetConnectionString("ConexaoPadrao") para tambem ter um registro,
-            // de uma maneira alternativa, mesmo q nao recomendada em praticas no mercado.
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
-
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexão com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
@@ -205,15 +199,11 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
-        // METODO - UPDATE - PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
+        // METODO PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
         public bool AtualizarProduto(Produto produtoAtualizado)
         {
             // Define uma linha de conexao com o banco de dados
-            // Mantive propositalmente essa linha, e nao a substitui pelo maneira feita nos metodos acima,
-            // com _configuration.GetConnectionString("ConexaoPadrao") para tambem ter um registro,
-            // de uma maneira alternativa, mesmo q nao recomendada em praticas no mercado.
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Variavel para armazenar o numero de linhas afetadas
             int linhasAfetadas = 0;
@@ -252,7 +242,7 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-        // METODO - DELETE -  PARA DELETAR UM PRODUTO NO BANCO DE DADOS
+        // METODO PARA DELETAR UM PRODUTO NO BANCO DE DADOS
         public bool DeletarProduto(int id)
         {
             // Define uma linha de conexao com o banco de dados
