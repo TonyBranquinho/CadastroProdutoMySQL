@@ -32,6 +32,7 @@ namespace CadastroProdutoMySQL.Controllers
         [HttpGet]
         public ActionResult<List<ProdutoDetalhadoDTO>> GetTodos()
         {
+            
             // Chama o metodo que retorna os produtos
             List<ProdutoDetalhadoDTO> listaProdutos = _operacoes.ListarProdutos();
 

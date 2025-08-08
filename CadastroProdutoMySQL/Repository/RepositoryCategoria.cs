@@ -6,6 +6,19 @@ namespace CadastroProdutoMySQL.Dados
 {
     public class RepositoryCategoria
     {
+        // Declara um campo privado para armazenar a configuraçao recebida,
+        // privado/somente leitura/interface/campo
+        private readonly IConfiguration _configuration;
+
+
+        // Construtor que inicializa os campos e recebe Iconfiguration por injeçao de dependecia
+        public RepositoryCategoria(IConfiguration configuration)
+        {
+            // Armazena o Iconfiguration recebido no campo privado para uso posterior
+            _configuration = configuration;   // Inicializa
+
+        }
+
 
         // METODO PARA LISTAR TODAS AS CATEGORIAS DE PRODUTOS
         public List<Categoria> ListarCategoria()
@@ -14,7 +27,7 @@ namespace CadastroProdutoMySQL.Dados
             List<Categoria> listaCategoria = new List<Categoria>();
 
             // Define uma linha de conexão com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexao com banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
@@ -53,7 +66,6 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
         // METODO PARA LISTAR A CATEGORIA POR ID
         public Categoria ListarCategoriaId(int id)
         {
@@ -61,7 +73,7 @@ namespace CadastroProdutoMySQL.Dados
             Categoria categoriaEncontrada = null;
 
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexão com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
@@ -98,14 +110,11 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
-
-
         // METODO PARA CADASTRAR UMA CATEGORIA
         public void InserirCategoria(Categoria novaCategoria)
         {
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexão com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
@@ -132,13 +141,11 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
-
-
+        // METODO PARA ATUALIZAR UMA CATEGORIA POR ID
         public bool AtualizaCategoriaId(Categoria categoriaAtualizada)
         {
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             int linhasAfetadas = 0;
 
@@ -163,10 +170,13 @@ namespace CadastroProdutoMySQL.Dados
             return linhasAfetadas > 0;
         }
 
+
+        
+        // METODO PARA REMOVER UMA CATEGORIA POR ID
         public bool DeletarCategoriaId(int Id)
         {
             // Define uma linha de conexao com o banco de dados
-            string conexao = "server=localhost;database=cadastroprodutosdb;uid=root;pwd=Sarcofilos666$Mundica;";
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             int linhasAfetadas = 0;
 
