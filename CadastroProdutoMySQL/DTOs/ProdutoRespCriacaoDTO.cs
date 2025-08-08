@@ -1,17 +1,17 @@
 ﻿namespace CadastroProdutoMySQL.DTOs
 {
-    public class ProdutoRespostaDTO
+    public class ProdutoRespCriacaoDTO
     {
         public long Id { get; set; }
         public string Nome { get; set; }
         public decimal Preco { get; set; }
 
 
-        public ProdutoRespostaDTO()
+        public ProdutoRespCriacaoDTO()
         {
         }
 
-        public ProdutoRespostaDTO(int id, string nome, decimal preco)
+        public ProdutoRespCriacaoDTO(int id, string nome, decimal preco)
         {
             Id = id;
             Nome = nome;
