@@ -41,8 +41,6 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
-
         // METODO PARA LER E LISTAR UM PRODUTO SELECIONADO PELO ID
         [HttpGet("{id}")] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes GET ID - BUSCA
         public ActionResult<Produto> GetPorId(int id)
@@ -78,7 +76,7 @@ namespace CadastroProdutoMySQL.Controllers
             }
 
             // Chama o metodo CadastroProduto e manda os dados que foram descritos na ediçao
-            ProdutoRespostaDTO respostaDTO = _produtoServico.CadastroProduto(DTO);
+            ProdutoRespCriacaoDTO respostaDTO = _produtoServico.CadastroProduto(DTO);
             
 
             // Facilita a vida do FRONTEND,
@@ -89,64 +87,31 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // METODO PRA RECEBER UM PRODUTO DO BANCO E ATUALIZA-LO
         [HttpPut("{id}")] // Diz ao ASP.NET Core que esse metodo responde a requisçoes PUT com id na rota
-        public IActionResult Atualizar(int id, [FromBody] Produto produtoAtualizado)
+        public IActionResult Atualizar(int id, [FromBody] ProdutoCriacaoDTO produtoAtualizadoDTO)
         {
-            // Verifica se o objeto recebido é nulo
-            if (produtoAtualizado == null)
+            // Verifica se os dados enviados passaram nas avaliaçoes da classe ProdutoCriacaoDTO
+            if (!ModelState.IsValid)
             {
-                // Retorna erro 400 Bad Request se vier nulo
-                return BadRequest("Dados invalidos. ");
-            }
-
-            // Verifica se o ID passado na URL é igual ao ID do objeto recebido
-            if (id != produtoAtualizado.Id)
-            {
-                // Retorna erro 400 Bad Request se IDs nao baterem
-                return BadRequest("ID da URL diferente do ID do produto enviado.");
+                return BadRequest(ModelState); // Retorna BadRequest 400 com detalhes dos erros
             }
 
             // Chama metodo para atualizar o produto no banco de dados
-            bool atualizadoComSucesso = _operacoes.AtualizarProduto(produtoAtualizado);
+            ProdutoRespAtualizacaoDTO atualizado = _produtoServico.Atualiza(produtoAtualizadoDTO, id);
 
-            // Verifica se a atualizaçao ocorreu (ou seja, o produto existia)
-            if (!atualizadoComSucesso)
-            {
-                // Retorna erro 404 Not Found se o produto nao existir
-                return NotFound("Produt nao encontrado.");
-            }
 
-            return NoContent(); // Retorna 204 - indica atualizaçao feita com sucesso
+
+            // Facilita a vida do FRONTEND,
+            // retornar 201 Created com URL do nvo recurso.
+            return CreatedAtAction(nameof(GetTodos), new { id = atualizado.Id }, atualizado);
         }
+
+
+
+
+
+
 
 
 

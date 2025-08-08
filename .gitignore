@@ -1,3 +1,9 @@
+#Ignore arquivos temporarios e configuraçoes locais do VS
+.vs/
+*.vscode/
+*.dbmdl
+*.pdb
+
 # Pastas de build
 bin/
 obj/
@@ -9,4 +15,4 @@ obj/
 
 # Outras Configuraçoes
 *.cache
-*.log
+*.log.vs/

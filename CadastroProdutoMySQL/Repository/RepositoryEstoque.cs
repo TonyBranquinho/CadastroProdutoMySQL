@@ -5,6 +5,18 @@ namespace CadastroProdutoMySQL.Dados
 {
     public class RepositoryEstoque
     {
+        // Declara um campo privado para armazenar a configuraçao recebida,
+        // privado/somente leitura/interface/campo
+        private readonly IConfiguration _configuration;
+
+        // Construtor que inicializa os campos e recebe Iconfiguration por injeçao de dependecia
+        public RepositoryEstoque(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+
+
         // METODO PARA LISTA O ESTOQUE
         public List<Estoque> Estoque()
         {
@@ -87,6 +99,54 @@ namespace CadastroProdutoMySQL.Dados
                     }
                 }
                 return estoqueEncontrado;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // METODO POST QUE CADASTRA ESTOQUE
+        public void CadastraEstoqueRepository(Estoque novoEstoque)
+        {
+            // Define uma linha de conexao com o banco de dados
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
+
+            // Cria um objeto de conexão com o banco usando a string acima
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexão com o banco
+                conn.Open();
+
+                // Define o comando SQL para buscar todos os produtos
+                string sql = "INSERT INTO estoque (Id, Quantidade) VALUES (@Id, @Quantidade)";
+
+                // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", novoEstoque.Id);
+                    cmd.Parameters.AddWithValue("@Quantidade", novoEstoque.Quantidade);
+
+                    // Executa o comando no banco (nao retorna resultados, apenas executa)
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
     }

@@ -56,7 +56,6 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
         // METODO PARA CADASTRAR UMA NOVA CATEGORIA
         [HttpPost]
         public IActionResult InserirCategoria([FromBody] Categoria novaCategoria)
@@ -67,6 +66,8 @@ namespace CadastroProdutoMySQL.Controllers
             // Facilita a vida do FRONTEND
             return CreatedAtAction(nameof(GetTodasCategorias), new { id = novaCategoria.Id }, novaCategoria);
         }
+
+
 
 
 

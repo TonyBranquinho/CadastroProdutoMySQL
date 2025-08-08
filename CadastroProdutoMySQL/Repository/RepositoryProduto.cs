@@ -225,15 +225,20 @@ namespace CadastroProdutoMySQL.Dados
                 conn.Open();
 
                 // Cria o comando SQL UPDATE com parametros
-                string sql = "UPDATE produtos SET Nome = @Nome, Preco = @Preco WHERE Id = @Id";
+                string sql = "UPDATE produtos SET " +
+                             "Nome = @Nome, Preco = @Preco, " +
+                             "CategoriaId = @CategoriaId, EstoqueId = @EstoqueId " +
+                             "WHERE Id = @Id";
 
                 // Cria um comando SQL a partir da conexao aberta e do texto SQL
                 using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                 {
                     // Adiciona os parametros com seus respectivos valores
+                    cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id);
                     cmd.Parameters.AddWithValue("@Nome", produtoAtualizado.Nome);
                     cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
-                    cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id);
+                    cmd.Parameters.AddWithValue("@CategoriaId", produtoAtualizado.CategoriaId);
+                    cmd.Parameters.AddWithValue("@EstoqueId", produtoAtualizado.EstoqueId);
 
                     // Executa o comando no banco e armazena quantas linhas foram afetadas
                     linhasAfetadas = cmd.ExecuteNonQuery();
