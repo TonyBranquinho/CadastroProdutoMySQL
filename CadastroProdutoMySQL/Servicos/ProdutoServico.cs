@@ -14,21 +14,22 @@ namespace CadastroProdutoMySQL.Servicos
         public List<Estoque> estoque { get; private set; }
 
 
-        private readonly RepositoryProduto _repositoryProduto;
 
-        
-        
 
+        private readonly RepositoryProduto _repositoryProduto;        
         
-        // Construtor com parametros
+        
+        // Construtor que recebe RepositoryProduto por injeçao e dependencia
         public ProdutoServico(RepositoryProduto repositoryProduto)
         {
             _repositoryProduto = repositoryProduto;
         }
 
 
+
+
         // Metodo Cadastro - POST
-        public ProdutoRespostaDTO CadastroProduto(ProdutoCriacaoDTO DTO)
+        public ProdutoRespCriacaoDTO CadastroProduto(ProdutoCriacaoDTO DTO)
         {
             // Mapeia o DTO para um Produto (modelo do dominio),
             // recebe os dados tipo ProdutoCriacaoDTO, passa eles para o tipo Produto,
@@ -47,7 +48,7 @@ namespace CadastroProdutoMySQL.Servicos
 
             // Cria um objeto ProdutoRespostaDTO com os dados que voltam para o cliente
             // isso evita expor propriedades desnecessarias e ou sensiveis do produto
-            ProdutoRespostaDTO respostaDTO = new ProdutoRespostaDTO
+            ProdutoRespCriacaoDTO respostaDTO = new ProdutoRespCriacaoDTO
             {
                 Id = novoProduto.Id,
                 Nome = novoProduto.Nome,
@@ -56,6 +57,64 @@ namespace CadastroProdutoMySQL.Servicos
 
             return respostaDTO;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // METODO ATUALIZAR - PUT 
+        public ProdutoRespAtualizacaoDTO Atualiza(ProdutoCriacaoDTO produtoAtualizadoDTO, long id)
+        {
+            Produto produtoAtualizado = new Produto
+            {   
+                Id = id,
+                Nome = produtoAtualizadoDTO.Nome,
+                Preco = produtoAtualizadoDTO.Preco,
+                CategoriaId = produtoAtualizadoDTO.CategoriaId,
+                EstoqueId = produtoAtualizadoDTO.EstoqueId,
+            };
+
+            _repositoryProduto.AtualizarProduto(produtoAtualizado);
+
+            ProdutoRespAtualizacaoDTO Resp = new ProdutoRespAtualizacaoDTO
+            {
+                Id = id,
+                Nome = produtoAtualizado.Nome,
+                Preco = produtoAtualizado.Preco,
+                CategoriaId = produtoAtualizado.CategoriaId,
+                EstoqueId = produtoAtualizado.EstoqueId,
+            };
+
+            return Resp;
+        }
+
+
+
+
+
+
+
 
 
 
@@ -93,15 +152,7 @@ namespace CadastroProdutoMySQL.Servicos
         }
 
 
-        // Metodo Atualiza - UPDATE
-        public void AtualizaProduto(Produto produtoEncontrado, string novoNome, decimal novoPreco)
-        {
-            produtoEncontrado.Nome = novoNome;
-            produtoEncontrado.Preco = novoPreco;
-        }
-
-
-        // Metodo Excluir - DELETE
+       // Metodo Excluir - DELETE
         public void ExcluirProduto(Produto excluiProduto)
         {
             produtos.Remove(excluiProduto);
