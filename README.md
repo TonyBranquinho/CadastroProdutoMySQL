@@ -1,53 +1,74 @@
 ﻿# CadastroProdutoMySQL
 
-Esse é um projeto **Back-End** desenvolvido em **C# com ASP.NET Core**,
-chamdo **CadastroProdutoMySQL**, que implementa uma API REST
-para operaçoes CRUD com persistencia em MySQL.
+Esse é um sistema de cadastro e gerenciamento do produtos, categorias e estoque desenvolvido em **C#**
+com **ASP.NET Core e persistencia em **MySQL**. Segue a arquitetura em camadas e boas praticas de 
+desenvolvimento, incluindo DTOs, serviços, repositorios e controllers.
 
-## Tecnologias Utilizadas:
-- C#
-- ASP.NET Core
-- Controllers
-- Swagger
-- MySQL
+---
 
 ## Funcionalidades:
-- **GET /produto** - Retorna todos os produtos cadastrados.
-- **GET /produto/{id}** - Retorna o produto pelo ID.
-- **POST /produto** - Cadastra um novo produto.
-- **PUT /produto/{id}** - Atualiza um produto existente.
-- **DELETE /produto/{id}** - Deleta um produto.
+
+- **Cadastro de Produtos** com informações detalhadas.
+- **Gerenciamento de Categorias** para organização de produtos.
+- **Controle de Estoque** com movimentaçoes e consultas.
+- **API RESTful** com métodos CRUD completos.
+- **DTOs** para separar as entidades de cominio da comunicaçao com o cliente.
+- **Injeçao de Dependência** para repositórios e serviços.
+- **Configuração de Banco de Dados MySQL** via `appsettings.json`.
+
+---
 
 ## Estrutura do projeto:
 CadastroProdutoMySQL
-- Controllers
---- ProdutoController.cs
-- Modelos
---- Produto.cs
-- Dados
---- RepositoryProduto.cs
-- Program.cs
+- CONTROLLERS/ # Controladores da API
+- DTOS/ # Objetos de Transferencia de Dados
+- MODELOS/ # Modelos de domínio
+- REPOSITORY/ # Repositório para acesso ao banco de dados
+- SERVICOS/ # Regras de negócios e lógica de aplicaçâo
+- appsettings.json # Configuraçoes de ambiente e banco
+- Program.cs # Ponto de entrada da aplicaçao
+
+---
+
+## Tecnologias Utilizadas:
+- **C# / .NET Core**
+- **ASP.NET Core Web API**
+- **MySQL**
+- **DTOs (Data Transfer Objects)**
+- **Swagger** para execuçao.
+
+---
+
+## Endpoints
+
+### Produtos
+- `Get /api/produto` - Lista todos os produtos.
+- `Get /api/produto/{id}` - Busca produto por ID. 
+- `POST /api/produto` - Cadastra novo produto. 
+- `PUT /api/produto/{id}` - Atualiza produto. 
+- `DELETE /api/produto{id}` - Remove produto. 
+
+### Categorias
+- `GET /api/categoria` - Lista todas as categorias.
+- `POST /api/caetgoria` - Cadastra nova categoria.
+
+### Estoque
+- `GET /api/estoque` - Lista registros de estoque.
+- `POST /api/produto` - Adiciona entrada/saída de estoque. 
+
+---
 
 ## Como executar:
 1. Clone o repositorio: 
 [GitHub](https://github.com/TonyBranquinho/CadastroProdutoMySQL)
-2. Execute o projeto
-3. Acesse o Swagger para testar os endpoints:
+2. Configurar conexão MySQL no appsettings.json
+"ConnectionStrings": {"DefaultConnection": "server=localhost;database=cadastro_produto;user=root;password=suasenha"}
+3. Execute o projeto
+4. Acesse o Swagger para testar os endpoints:
 [https://localhost:7128/swagger/index.html](https://localhost:7128/swagger/index.html)
 
-## Conceitos Utilizados:
-- **API REST: Interface que permite comunicaçao entre aplicaçoes via 
-requisiçao HTTP padronizadas.
-- **Controllers: Classes responsaveis por gerenciar rotas (endpoints)
-e receber requisições.
-- **Endpoints: Cada rota criafa que corresponde a um verbo HTTP (GET,
-POST, PUT, DELETE).
-- **Swagger: Ferramenta de documentaçao e testes de APIs.
-- **Persistencia em MySQL: Os dados sao armazenados em banco relacional,
-garantindo integridade e segurança.
 
 ## Melhorias futuras, e que estao sendo implementadas:
-- Criar relacionamento PRODUTO x ESTOQUE x CATEGORIA.
 - Implementar Entity Framework Core (Code First + Migrations).
 - Implementar validaçoes de entrada mais robustas. 
 - Criar testes automatizados (xUnit).
