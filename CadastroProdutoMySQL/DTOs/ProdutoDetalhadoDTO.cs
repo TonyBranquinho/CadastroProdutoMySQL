@@ -3,7 +3,7 @@
     public class ProdutoDetalhadoDTO
     {
 
-        public int Id { get; set; }
+        public long Id { get; set; }
         public string Nome { get; set; }
         public decimal Preco { get; set; }
         public string Categoria { get; set; }
@@ -14,7 +14,7 @@
         {
         }
 
-        public ProdutoDetalhadoDTO(int id, string categoria, string nome, decimal preco, int quantidade)
+        public ProdutoDetalhadoDTO(long id, string categoria, string nome, decimal preco, int quantidade)
         {
             Id = id;
             Categoria = categoria;
