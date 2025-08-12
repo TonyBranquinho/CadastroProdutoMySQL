@@ -242,8 +242,9 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
+
         // METODO PARA DELETAR UM PRODUTO NO BANCO DE DADOS
-        public bool DeletarProduto(int id)
+        public void DeletarProduto(int id)
         {
             // Define uma linha de conexao com o banco de dados
             string conexao = _configuration.GetConnectionString("ConexaoPadrao");
@@ -266,10 +267,53 @@ namespace CadastroProdutoMySQL.Dados
                     // Executa a instruçao DELETE e armazena quantas linhas foram afetadas
                     int rowsAffected = cmd.ExecuteNonQuery();
 
-                    // Retorna true se deletou algo, false se não encontrou nada
-                    return rowsAffected > 0;
+                    if (rowsAffected == 0)
+                    {
+                        throw new Exception($"Produto com ID {id} nao encontrado");
+                    }
                 }
             }
+        }
+
+
+        // METODO PARA VERIFICAR DUPLICIDADE DE NOME DE PRODUTO
+        public bool ExistsByName(string nome)
+        {
+            // Obtem uma linha de conexao definida no appsetings.json
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
+
+            // Cria uma conexao MySQL usando a string acima
+            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexão com o banco
+                conn.Open();
+
+                // Comando SQL para contar quantos registros tem o nome informado
+                string sql = "SELECT COUNT(*) FROM produtos WHERE nome = @nome";
+
+                // Cria um comando SQL vinculado a conexao aberta
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    // Adiciona o parametro @nome e define seu valor
+                    // Isso previne SQL Injection e garante tipagem correta
+                    cmd.Parameters.AddWithValue("@Nome", nome);
+
+                    // Executa o comando e retorna o primeiro valor da lista
+                    // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    // Retorna true se existir ao menos 1 registro com esse nome
+                    return count > 0;
+                }
+            }
+        }
+
+
+        // METODO APRA VERIFICAR DUPLICIDADE DE INDICE DE ESTOQUE
+        public bool ExistByEstoqueId(int id)
+        {
+
         }
     }
 }
