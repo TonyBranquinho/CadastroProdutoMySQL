@@ -2,6 +2,7 @@
 using CadastroProdutoMySQL.Dados;
 using CadastroProdutoMySQL.DTOs;
 using CadastroProdutoMySQL.Modelos;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MySql.Data.MySqlClient;
 
@@ -9,16 +10,10 @@ namespace CadastroProdutoMySQL.Servicos
 {
     public class ProdutoServico
     {
-        // Atributos da classe
-        public List<Produto> produtos { get; private set; }
-        public List<Estoque> estoque { get; private set; }
+
+        private readonly RepositoryProduto _repositoryProduto;
 
 
-
-
-        private readonly RepositoryProduto _repositoryProduto;        
-        
-        
         // Construtor que recebe RepositoryProduto por injeçao e dependencia
         public ProdutoServico(RepositoryProduto repositoryProduto)
         {
@@ -28,22 +23,45 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
-        // Metodo Cadastro - POST
-        public ProdutoRespCriacaoDTO CadastroProduto(ProdutoCriacaoDTO DTO)
+        // METODO GET ID
+        public ProdutoDetalhadoDTO BuscaId(int id)
         {
+            ProdutoDetalhadoDTO produtoEncontrado = _repositoryProduto.BuscarProdutoId(id);
+
+            return produtoEncontrado;
+        }
+
+
+
+        // METODO - POST
+        public ProdutoRespCriacaoDTO CadastroProduto(ProdutoCriacaoDTO dto)
+        {
+            // Regra de negocio: Verifica duplicidade
+            if (_repositoryProduto.ExistsByName(dto.Nome))
+            {
+                return null; // Controller vai traduzir para HTTP 409
+            }
+
+            if (_repositoryProduto.ExistsByEstoqueId(dto.EstoqueId))
+            {
+                return null; // Controller vai traduzir para HTTP 409
+            }
+
+
             // Mapeia o DTO para um Produto (modelo do dominio),
-            // recebe os dados tipo ProdutoCriacaoDTO, passa eles para o tipo Produto,
             // para evitar exposiçao de campos indesejados (Mais segurança)
             Produto novoProduto = new Produto
             {
-                Nome = DTO.Nome,
-                Preco = DTO.Preco,
-                CategoriaId = DTO.CategoriaId,
-                EstoqueId = DTO.EstoqueId,
+                Nome = dto.Nome,
+                Preco = dto.Preco,
+                CategoriaId = dto.CategoriaId,
+                EstoqueId = dto.EstoqueId,
             };
+
 
             // Chama o metodo que adiciona o novo produto no Banco de Dados
             _repositoryProduto.InserirProduto(novoProduto);
+
 
 
             // Cria um objeto ProdutoRespostaDTO com os dados que voltam para o cliente
@@ -62,32 +80,11 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // METODO ATUALIZAR - PUT 
+        // METODO - PUT 
         public ProdutoRespAtualizacaoDTO Atualiza(ProdutoCriacaoDTO produtoAtualizadoDTO, long id)
         {
             Produto produtoAtualizado = new Produto
-            {   
+            {
                 Id = id,
                 Nome = produtoAtualizadoDTO.Nome,
                 Preco = produtoAtualizadoDTO.Preco,
@@ -112,50 +109,12 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // Metodo Busca - READ
-        public Produto BuscaProduto(int Codigo)
+        // METODO - DELETE
+        public bool ExcluirProduto(int id)
         {
-            Produto produtoEncontrado = produtos.FirstOrDefault(p => p.Id == Codigo);
-            return produtoEncontrado;
-        }
+            _repositoryProduto.DeletarProduto(id);
 
-
-       // Metodo Excluir - DELETE
-        public void ExcluirProduto(Produto excluiProduto)
-        {
-            produtos.Remove(excluiProduto);
+            return true;
         }
     }
 }
