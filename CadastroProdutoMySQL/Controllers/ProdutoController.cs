@@ -34,7 +34,12 @@ namespace CadastroProdutoMySQL.Controllers
         {
             
             // Chama o metodo que retorna os produtos
-            List<ProdutoDetalhadoDTO> listaProdutos = _operacoes.ListarProdutos();
+            List<ProdutoDetalhadoDTO> listaProdutos = _produtoServico.ListarTodos();
+
+            if (listaProdutos != null)
+            {
+                return NotFound();
+            }
 
             // Retorna a lista como resposta HTTP 200
             return Ok(listaProdutos);
@@ -42,13 +47,9 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
-
-
-
         // METODO PARA LER E LISTAR UM PRODUTO SELECIONADO PELO ID
         [HttpGet("{id}")] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes GET ID - BUSCA
-        public ActionResult<Produto> GetPorId(int id)
+        public ActionResult<ProdutoDetalhadoDTO> GetPorId(int id)
         {
             // Testa validade do ID
             if (id <= 0)
@@ -70,8 +71,6 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-
-
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
         [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
         public IActionResult Cadastrar([FromBody] ProdutoCriacaoDTO dto)
@@ -86,10 +85,7 @@ namespace CadastroProdutoMySQL.Controllers
             // retornar 201 Created com URL do nvo recurso.
             return CreatedAtAction(nameof(GetTodos), new { id = respostaDTO.Id }, respostaDTO);
         }
-
-
-
-              
+        
 
 
         // METODO PRA RECEBER UM PRODUTO DO BANCO E ATUALIZA-LO
@@ -115,8 +111,6 @@ namespace CadastroProdutoMySQL.Controllers
 
             return Ok(atualizado); // Retorna 200
         }
-
-
 
 
 
