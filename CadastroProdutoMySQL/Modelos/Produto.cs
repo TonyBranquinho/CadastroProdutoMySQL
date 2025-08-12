@@ -16,10 +16,14 @@ namespace CadastroProdutoMySQL.Modelos
         public int EstoqueId {  get; set; }
         public Estoque Estoque { get; set; }
 
+
         // Construtor vazio
         public Produto()
         {
+            Categoria = new Categoria();
+            Estoque = new Estoque();
         }
+
 
         // Construtor com parametros
         public Produto(long id, string nome, decimal preco, int categoriaId, int estoqueId)

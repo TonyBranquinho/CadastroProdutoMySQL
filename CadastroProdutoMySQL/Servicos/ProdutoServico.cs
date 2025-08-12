@@ -23,12 +23,59 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
+        // METODO GET
+        public List<ProdutoDetalhadoDTO> ListarTodos()
+        {
+
+            List<Produto> retorno = _repositoryProduto.ListarProdutos();
+
+            if (retorno == null)
+            {
+                return null;
+            }
+
+
+            List<ProdutoDetalhadoDTO> listaProdutoDetalhadoDTO = new List<ProdutoDetalhadoDTO>();
+
+
+            // Mapeia o retorno PRODUTO da repository para DTO
+            foreach (Produto p in retorno)
+            {
+                ProdutoDetalhadoDTO produtoDetalhadoDTO = new ProdutoDetalhadoDTO();
+
+                produtoDetalhadoDTO.Id = p.Id;
+                produtoDetalhadoDTO.Nome = p.Nome;
+                produtoDetalhadoDTO.Preco = p.Preco;
+                produtoDetalhadoDTO.Categoria = p.Categoria.Nome;
+                produtoDetalhadoDTO.Quantidade = p.Estoque.Quantidade;
+
+                listaProdutoDetalhadoDTO.Add(produtoDetalhadoDTO);
+            }
+
+            return listaProdutoDetalhadoDTO;
+        }
+
+
+
+
         // METODO GET ID
         public ProdutoDetalhadoDTO BuscaId(int id)
         {
-            ProdutoDetalhadoDTO produtoEncontrado = _repositoryProduto.BuscarProdutoId(id);
+            Produto buscaProduto = _repositoryProduto.BuscarProdutoId(id);
 
-            return produtoEncontrado;
+            if (buscaProduto == null)
+            {
+                return null;
+            }
+
+            return new ProdutoDetalhadoDTO
+            {
+                Id = buscaProduto.Id,
+                Nome = buscaProduto.Nome,
+                Preco = buscaProduto.Preco,
+                Categoria = buscaProduto.Categoria.Nome,
+                Quantidade = buscaProduto.Estoque.Quantidade,
+            };
         }
 
 
@@ -78,8 +125,6 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
-
-
         // METODO - PUT 
         public ProdutoRespAtualizacaoDTO Atualiza(ProdutoCriacaoDTO produtoAtualizadoDTO, long id)
         {
@@ -105,7 +150,6 @@ namespace CadastroProdutoMySQL.Servicos
 
             return Resp;
         }
-
 
 
 

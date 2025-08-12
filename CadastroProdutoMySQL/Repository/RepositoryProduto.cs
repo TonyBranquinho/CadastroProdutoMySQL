@@ -22,11 +22,16 @@ namespace CadastroProdutoMySQL.Dados
         }
 
 
+
+
+
         // METODO PRA LER OS DADOS NO BANCO DE DADOS E RETORNAR UMA LISTA
-        public List<ProdutoDetalhadoDTO> ListarProdutos()
+        public List<Produto> ListarProdutos()
         {
             // Cria uma lsita pra armazenas os produtos recuperados do banco
-            List<ProdutoDetalhadoDTO> listaProdutosDTO = new List<ProdutoDetalhadoDTO>();
+            List<Produto> listaP = new List<Produto>();
+
+            Produto produto = null;
 
             // Define uma linha de conexao com o banco de dados
             string conexao = _configuration.GetConnectionString("ConexaoPadrao");
@@ -60,33 +65,29 @@ namespace CadastroProdutoMySQL.Dados
                         while (reader.Read())
                         {
                             // Cria um novo objeto Produto
-                            ProdutoDetalhadoDTO dto = new ProdutoDetalhadoDTO();
+                            produto = new Produto();
+                            
+                            produto.Id = reader.GetInt32("Id");
+                            produto.Nome = reader.GetString("Nome");
+                            produto.Preco = reader.GetDecimal("Preco");
+                            produto.Categoria.Nome = reader.GetString("NomeCategoria");
+                            produto.Estoque.Quantidade = reader.GetInt32("Quantidade");
 
-                            dto.Id = reader.GetInt32("Id");
-                            dto.Nome = reader.GetString("Nome");
-                            dto.Preco = reader.GetDecimal("Preco");
-                            dto.Categoria = reader.GetString("NomeCategoria");
-                            dto.Quantidade = reader.GetInt32("Quantidade");
-
-                            listaProdutosDTO.Add(dto);
-
+                            listaP.Add(produto);
                         }
                     }
                 }
-
-                // Retorna a lista de produtos preenchida
-                return listaProdutosDTO;
             }
+            return listaP;
         }
 
 
 
-
         // METODO PARA LER PELO ID UM PRODUTO NO BANCO DE DADOS E RETORNA-LO
-        public ProdutoDetalhadoDTO BuscarProdutoId(int id)
+        public Produto BuscarProdutoId(int id)
         {
             // Cria um novo objeto DTO para imprimir de maneira organizada
-            ProdutoDetalhadoDTO dto = null;
+            Produto produtoEncontrado = null;
 
 
             // Define uma linha de conexao com o banco de dados
@@ -120,24 +121,23 @@ namespace CadastroProdutoMySQL.Dados
                         // Se houver um resultado
                         if (reader.Read())
                         {
-                            // Instancia DTO para a impressao organizada
-                            dto = new ProdutoDetalhadoDTO();
+                            // Instancia um produto para a impressao organizada
+                            produtoEncontrado = new Produto();
 
-                            dto.Id = reader.GetInt32("Id");
-                            dto.Nome = reader.GetString("Nome");
-                            dto.Preco = reader.GetDecimal("Preco");
-                            dto.Categoria = reader.GetString("CategoriaNome");
-                            dto.Quantidade = reader.GetInt32("Quantidade");
+                            produtoEncontrado.Id = reader.GetInt32("Id");
+                            produtoEncontrado.Nome = reader.GetString("Nome");
+                            produtoEncontrado.Preco = reader.GetDecimal("Preco");
+                            produtoEncontrado.Categoria.Nome = reader.GetString("CategoriaNome");
+                            produtoEncontrado.Estoque.Quantidade = reader.GetInt32("Quantidade");
                         }
                     }
-
                 }
-
-                // Retorna o produto encontrado (ou null se nao existir)
-                return dto;
             }
-        }
 
+            // Retorna o produto encontrado (ou null se nao existir)
+            return produtoEncontrado;
+
+        }
 
 
 
@@ -198,7 +198,6 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
         // METODO PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
         public bool AtualizarProduto(Produto produtoAtualizado)
         {
@@ -241,8 +240,6 @@ namespace CadastroProdutoMySQL.Dados
 
 
 
-
-
         // METODO PARA DELETAR UM PRODUTO NO BANCO DE DADOS
         public void DeletarProduto(int id)
         {
@@ -276,8 +273,11 @@ namespace CadastroProdutoMySQL.Dados
         }
 
 
+
+
+
         // METODO PARA VERIFICAR DUPLICIDADE DE NOME DE PRODUTO
-        public bool ExistsByName(string nome)
+        public bool ExistsByName(string Nome)
         {
             // Obtem uma linha de conexao definida no appsetings.json
             string conexao = _configuration.GetConnectionString("ConexaoPadrao");
@@ -297,7 +297,7 @@ namespace CadastroProdutoMySQL.Dados
                 {
                     // Adiciona o parametro @nome e define seu valor
                     // Isso previne SQL Injection e garante tipagem correta
-                    cmd.Parameters.AddWithValue("@Nome", nome);
+                    cmd.Parameters.AddWithValue("@Nome", Nome);
 
                     // Executa o comando e retorna o primeiro valor da lista
                     // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
@@ -310,10 +310,37 @@ namespace CadastroProdutoMySQL.Dados
         }
 
 
-        // METODO APRA VERIFICAR DUPLICIDADE DE INDICE DE ESTOQUE
-        public bool ExistByEstoqueId(int id)
+        // METODO PARA VERIFICAR DUPLICIDADE DE INDICE DE ESTOQUE
+        public bool ExistsByEstoqueId(int EstoqueId)
         {
+            // Obtem uma linha de conexao definida no appsetings.json
+            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
+            // Cria uma conexao MySQL usando a string acima
+            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+            using (MySqlConnection conn = new MySqlConnection(conexao))
+            {
+                // Abre a conexão com o banco
+                conn.Open();
+
+                // Comando SQL para contar quantos registros tem o nome informado
+                string sql = "SELECT COUNT(*) FROM estoque WHERE estoqueId = @estoqueId";
+
+                // Cria um comando SQL vinculado a conexao aberta
+                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                {
+                    // Adiciona o parametro @estoqueId e define seu valor
+                    // Isso previne SQL Injection e garante tipagem correta
+                    cmd.Parameters.AddWithValue("@estoqueId", EstoqueId);
+
+                    // Executa o comando e retorna o primeiro valor da lista
+                    // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                    // Retorna true se existir ao menos 1 registro com esse nome
+                    return count > 0;
+                }
+            }
         }
     }
 }
