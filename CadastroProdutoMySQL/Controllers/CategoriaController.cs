@@ -21,9 +21,9 @@ namespace CadastroProdutoMySQL.Controllers
 
 
         // Construtor que inicializa a classe
-        public CategoriaController()
+        public CategoriaController(RepositoryCategoria operacoes)
         {
-            _operacoes = new RepositoryCategoria();
+            _operacoes = operacoes;
         }
 
 
