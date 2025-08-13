@@ -88,6 +88,7 @@ namespace CadastroProdutoMySQL.Controllers
         
 
 
+
         // METODO PRA RECEBER UM PRODUTO DO BANCO E ATUALIZA-LO
         [HttpPut("{id}")] // Diz ao ASP.NET Core que esse metodo responde a requisçoes PUT com id na rota
         public IActionResult Atualizar(int id, [FromBody] ProdutoCriacaoDTO produtoAtualizadoDTO)
