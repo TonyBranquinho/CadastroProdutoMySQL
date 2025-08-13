@@ -16,6 +16,9 @@ namespace CadastroProdutoMySQL.Servicos
         }
 
 
+
+
+
         // METODO CADASTRO ESTOQUE - POST
         public EstoqueRespostaDTO CadastraEstoque(EstoqueCriacaoDTO estoqueDTO)
         {

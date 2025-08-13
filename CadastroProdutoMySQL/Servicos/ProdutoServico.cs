@@ -26,7 +26,7 @@ namespace CadastroProdutoMySQL.Servicos
         // METODO GET
         public List<ProdutoDetalhadoDTO> ListarTodos()
         {
-
+            // Chama na Repository o metodo para listar o os produtos
             List<Produto> retorno = _repositoryProduto.ListarProdutos();
 
             if (retorno == null)
@@ -34,11 +34,11 @@ namespace CadastroProdutoMySQL.Servicos
                 return null;
             }
 
-
+            // Instancia lista para impressao
             List<ProdutoDetalhadoDTO> listaProdutoDetalhadoDTO = new List<ProdutoDetalhadoDTO>();
 
 
-            // Mapeia o retorno PRODUTO da repository para DTO
+            // Mapeia o retorno PRODUTO da repository para a lista de impressao DTO
             foreach (Produto p in retorno)
             {
                 ProdutoDetalhadoDTO produtoDetalhadoDTO = new ProdutoDetalhadoDTO();
