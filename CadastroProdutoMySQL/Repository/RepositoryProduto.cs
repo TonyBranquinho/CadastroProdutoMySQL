@@ -28,7 +28,7 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PRA LER OS DADOS NO BANCO DE DADOS E RETORNAR UMA LISTA
         public List<Produto> ListarProdutos()
         {
-            try // Captura erros que vieram do SQL Server (banco de dados)
+            try // Tenta rodar o codigo normalmente
             {
 
 
@@ -83,14 +83,14 @@ namespace CadastroProdutoMySQL.Dados
                     }
                 }
                 return listaP;
+            }
 
 
-                catch (MySqlException ex)
+            catch (MySqlException ex) // Se o erro veio do banco de dados
             {
-                // Registra no log que houve um erro, guardadno a mensagem de erro e os dados do produto
-                // O @Produto serve para mostrar o conteúdo do objeto 'produto' no log, de forma detalhada
-                _logger.LogError(ex, "Erro ao inserir produto no banco. Produto: {@Produto}", produto);
-                
+                // Registra no log que houve um erro ao buscar produtos
+                _logger.LogError(ex, "Erro ao inserir produto no banco de dados");
+
                 throw; // Joga o erro de novo pra cima, para que outra parte do sistema também possa tratar se precisar
             }
 
@@ -108,57 +108,71 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PARA LER PELO ID UM PRODUTO NO BANCO DE DADOS E RETORNA-LO
         public Produto BuscarProdutoId(int id)
         {
-            // Cria um novo objeto DTO para imprimir de maneira organizada
-            Produto produtoEncontrado = null;
-
-
-            // Obtem uma linha de conexao definida no appsetings.json
-            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-            // Cria um objeto de conexao com o banco usando a string acima
-            using (MySqlConnection conn = new MySqlConnection(conexao))
+            try
             {
-                // Abre a conexao com banco
-                conn.Open();
 
-                // Comando SQL para buscar o produto usando JOIN
-                string sql = "SELECT " +
-                                "p.Id, p.Nome, p.Preco, " +
-                                "p.CategoriaId, c.Nome AS CategoriaNome, " +
-                                "p.EstoqueId, e.Quantidade " +
-                             "FROM produtos p " +
-                             "JOIN categoria c ON p.CategoriaId = c.Id " +
-                             "JOIN estoque e ON p.EstoqueId = e.Id " +
-                             "WHERE p.Id = @Id";
+                // Cria um novo objeto DTO para imprimir de maneira organizada
+                Produto produtoEncontrado = null;
 
-                // Cria um comando SQL a partir da conexão aberta e do texto SQL
-                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+
+                // Obtem uma linha de conexao definida no appsetings.json
+                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
+
+                // Cria um objeto de conexao com o banco usando a string acima
+                using (MySqlConnection conn = new MySqlConnection(conexao))
                 {
-                    // Adiciona o parametro @Id
-                    cmd.Parameters.AddWithValue("@Id", id);
+                    // Abre a conexao com banco
+                    conn.Open();
 
-                    // Executa o comando SQL e cria um leitor de dados (DataReader)
-                    using (MySqlDataReader reader = cmd.ExecuteReader())
+                    // Comando SQL para buscar o produto usando JOIN
+                    string sql = "SELECT " +
+                                    "p.Id, p.Nome, p.Preco, " +
+                                    "p.CategoriaId, c.Nome AS CategoriaNome, " +
+                                    "p.EstoqueId, e.Quantidade " +
+                                 "FROM produtos p " +
+                                 "JOIN categoria c ON p.CategoriaId = c.Id " +
+                                 "JOIN estoque e ON p.EstoqueId = e.Id " +
+                                 "WHERE p.Id = @Id";
+
+                    // Cria um comando SQL a partir da conexão aberta e do texto SQL
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
-                        // Se houver um resultado
-                        if (reader.Read())
-                        {
-                            // Instancia um produto para a impressao organizada
-                            produtoEncontrado = new Produto();
+                        // Adiciona o parametro @Id
+                        cmd.Parameters.AddWithValue("@Id", id);
 
-                            produtoEncontrado.Id = reader.GetInt32("Id");
-                            produtoEncontrado.Nome = reader.GetString("Nome");
-                            produtoEncontrado.Preco = reader.GetDecimal("Preco");
-                            produtoEncontrado.Categoria.Nome = reader.GetString("CategoriaNome");
-                            produtoEncontrado.Estoque.Quantidade = reader.GetInt32("Quantidade");
+                        // Executa o comando SQL e cria um leitor de dados (DataReader)
+                        using (MySqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            // Se houver um resultado
+                            if (reader.Read())
+                            {
+                                // Instancia um produto para a impressao organizada
+                                produtoEncontrado = new Produto();
+
+                                produtoEncontrado.Id = reader.GetInt32("Id");
+                                produtoEncontrado.Nome = reader.GetString("Nome");
+                                produtoEncontrado.Preco = reader.GetDecimal("Preco");
+                                produtoEncontrado.Categoria.Nome = reader.GetString("CategoriaNome");
+                                produtoEncontrado.Estoque.Quantidade = reader.GetInt32("Quantidade");
+                            }
                         }
                     }
                 }
+                // Retorna o produto encontrado (ou null se nao existir)
+                return produtoEncontrado;
             }
 
-            // Retorna o produto encontrado (ou null se nao existir)
-            return produtoEncontrado;
+            catch (MySqlException ex) // Se o erro veio do banco de dados
+            {
+                _logger.LogError(ex, "Erro ao listar o produto.");
+                throw; // Joga o erro para cima
+            }
 
+            catch (Exception ex) // Se o erro veio de outro lugar
+            {
+                _logger.LogError(ex, "Erro inesperado ao listar o produto.");
+                throw; // Joga o erro para cima
+            }
         }
 
 
@@ -166,56 +180,63 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PRA INSERIR UM PRODUTO NO BANCO DE DADOS
         public void InserirProduto(Produto novoProduto)
         {
-            // Obtem uma linha de conexao definida no appsetings.json
-            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-            // Cria uma conexao MySQL usando a string acima
-            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
-            using (MySqlConnection conn = new MySqlConnection(conexao))
+            try // Tenta rodar o codigo normalmente
             {
-                // Abre a conexão com o banco
-                conn.Open();
+                // Obtem uma linha de conexao definida no appsetings.json
+                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
-                // Comando SQL INSERT com parametros pra evitar SQL Injection
-                string sql = "INSERT INTO produtos (Nome, Preco, CategoriaId, EstoqueId) " +
-                             "VALUES (@Nome, @Preco, @CategoriaId, @EstoqueId)";
-
-
-                // Cria um comando SQL a partir da conexão aberta e do texto SQL
-                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                // Cria uma conexao MySQL usando a string acima
+                // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+                using (MySqlConnection conn = new MySqlConnection(conexao))
                 {
+                    // Abre a conexão com o banco
+                    conn.Open();
 
-                    // Adiciona o parametro Nome e define o valor vindo do objeto novoProduto
-                    cmd.Parameters.AddWithValue("@Nome", novoProduto.Nome);
+                    // Comando SQL INSERT com parametros pra evitar SQL Injection
+                    string sql = "INSERT INTO produtos (Nome, Preco, CategoriaId, EstoqueId) " +
+                                 "VALUES (@Nome, @Preco, @CategoriaId, @EstoqueId)";
 
-                    // Adiciona o parametro Preco e define seu valor vindo do objeto novoProduto
-                    cmd.Parameters.AddWithValue("@Preco", novoProduto.Preco);
 
-                    // Adiciona o parametro CategoriaId e define seu valor vindo do objeto novoProduto
-                    cmd.Parameters.AddWithValue("@CategoriaId", novoProduto.CategoriaId);
+                    // Cria um comando SQL a partir da conexão aberta e do texto SQL
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
 
-                    // Adiciona o parametro EstoqueId e define seu valor vindo do objeto novoProduto
-                    cmd.Parameters.AddWithValue("@EstoqueId", novoProduto.EstoqueId);
+                        // Adiciona o parametro Nome e define o valor vindo do objeto novoProduto
+                        cmd.Parameters.AddWithValue("@Nome", novoProduto.Nome);
+                        cmd.Parameters.AddWithValue("@Preco", novoProduto.Preco);
+                        cmd.Parameters.AddWithValue("@CategoriaId", novoProduto.CategoriaId);
+                        cmd.Parameters.AddWithValue("@EstoqueId", novoProduto.EstoqueId);
 
-                    // Executa o comando no banco (nao retorna resultados, apenas executa)
-                    cmd.ExecuteNonQuery();
+                        // Executa o comando no banco (nao retorna resultados, apenas executa)
+                        cmd.ExecuteNonQuery();
+                    }
 
+                    // Cria um segundo comando sql para recuperar o ultimo id disponivel na lista
+                    string sqlGetId = "SELECT LAST_INSERT_ID();";
+
+                    using (var cmd = new MySqlCommand(sqlGetId, conn))
+                    {
+
+                        // tipo / variavel / recupera o id gerado automaticamente polo banco 
+                        long novoId = Convert.ToInt64(cmd.ExecuteScalar());
+
+                        novoProduto.Id = novoId;
+                    }
                 }
+            }
 
-                // Cria um segundo comando sql para recuperar o ultimo id disponivel na lista
-                string sqlGetId = "SELECT LAST_INSERT_ID();";
+            catch (MySqlException ex) // Se o erro for do bando de dados
+            {
+                // Registra no log que houve um erro, guardando a mensagem de erro e os dados do produto
+                // O "Produto" serve para mostrar o conteudo do objeto 'produto' no log, de forma detalhada
+                _logger.LogError(ex, "Erro ao inserir produto no banco. Produto: {@Produto}", novoProduto);
+                throw; // Joga o erro para cima
+            }
 
-                using (var cmd = new MySqlCommand(sqlGetId, conn))
-                {
-
-                    // tipo / variavel / recupera o id gerado automaticamente polo banco 
-                    long novoId = Convert.ToInt64(cmd.ExecuteScalar());
-
-                    novoProduto.Id = novoId;
-
-                }
-
-                // Fecha atomaticamente a conexao ao sair do bloco using
+            catch (Exception ex) // Se o erro foi de outro lugar
+            {
+                _logger.LogError(ex, "Erro inesperado ao inserir produto.");
+                throw; // Joga o erro para cima
             }
         }
 
@@ -224,77 +245,102 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PARA ATUALIZAR UM PRODUTO NO BANCO DE DADOS
         public bool AtualizarProduto(Produto produtoAtualizado)
         {
-            // Obtem uma linha de conexao definida no appsetings.json
-            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-            // Variavel para armazenar o numero de linhas afetadas
-            int linhasAfetadas = 0;
-
-            // Cria uma conexao MySQL usando a string acima
-            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
-            using (MySqlConnection conn = new MySqlConnection(conexao))
+            try
             {
-                // Abre a conexão com o banco
-                conn.Open();
+                // Obtem uma linha de conexao definida no appsetings.json
+                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
-                // Comando SQL UPDATE com parametros
-                string sql = "UPDATE produtos SET " +
-                             "Nome = @Nome, Preco = @Preco, " +
-                             "CategoriaId = @CategoriaId, EstoqueId = @EstoqueId " +
-                             "WHERE Id = @Id";
+                // Variavel para armazenar o numero de linhas afetadas
+                int linhasAfetadas = 0;
 
-                // Cria um comando SQL vinculado a conexao aberta
-                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                // Cria uma conexao MySQL usando a string acima
+                // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+                using (MySqlConnection conn = new MySqlConnection(conexao))
                 {
-                    // Adiciona os parametros com seus respectivos valores
-                    cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id);
-                    cmd.Parameters.AddWithValue("@Nome", produtoAtualizado.Nome);
-                    cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
-                    cmd.Parameters.AddWithValue("@CategoriaId", produtoAtualizado.CategoriaId);
-                    cmd.Parameters.AddWithValue("@EstoqueId", produtoAtualizado.EstoqueId);
+                    // Abre a conexão com o banco
+                    conn.Open();
 
-                    // Executa o comando no banco e armazena quantas linhas foram afetadas
-                    linhasAfetadas = cmd.ExecuteNonQuery();
+                    // Comando SQL UPDATE com parametros
+                    string sql = "UPDATE produtos SET " +
+                                 "Nome = @Nome, Preco = @Preco, " +
+                                 "CategoriaId = @CategoriaId, EstoqueId = @EstoqueId " +
+                                 "WHERE Id = @Id";
+
+                    // Cria um comando SQL vinculado a conexao aberta
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        // Adiciona os parametros com seus respectivos valores
+                        cmd.Parameters.AddWithValue("@Id", produtoAtualizado.Id);
+                        cmd.Parameters.AddWithValue("@Nome", produtoAtualizado.Nome);
+                        cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
+                        cmd.Parameters.AddWithValue("@CategoriaId", produtoAtualizado.CategoriaId);
+                        cmd.Parameters.AddWithValue("@EstoqueId", produtoAtualizado.EstoqueId);
+
+                        // Executa o comando no banco e armazena quantas linhas foram afetadas
+                        linhasAfetadas = cmd.ExecuteNonQuery();
+                    }
                 }
+
+                // Se ao menos uma linha foi afetada, significa que a atualizaçao ocorreu
+                return linhasAfetadas > 0;
             }
 
-            // Se ao menos uma linha foi afetada, significa que a atualizaçao ocorreu
-            return linhasAfetadas > 0;
-        }
+            catch (MySqlException ex)
+            {
+                _logger.LogError(ex, "Erro ao atualizar o produto.");
+            }
 
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, " Erro inesperado ao atualizar o produto.");
+            }
+        }
 
 
         // METODO PARA DELETAR UM PRODUTO NO BANCO DE DADOS
         public void DeletarProduto(int id)
         {
-            // Obtem uma linha de conexao definida no appsetings.json
-            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-            // Cria uma conexao MySQL usando a string acima
-            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
-            using (MySqlConnection conn = new MySqlConnection(conexao))
+            try
             {
-                // Abre a conexão com o banco
-                conn.Open();
+                // Obtem uma linha de conexao definida no appsetings.json
+                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
-                // Comando SQL que exclui objeto se ele tiver o id igual ao id recebido
-                string sql = "DELETE FROM produtos WHERE Id = @Id";
-
-                // Cria um comando SQL vinculado a conexao aberta
-                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                // Cria uma conexao MySQL usando a string acima
+                // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+                using (MySqlConnection conn = new MySqlConnection(conexao))
                 {
-                    // Adiciona o parametro @estoqueId e define seu valor
-                    // Isso previne SQL Injection e garante tipagem correta
-                    cmd.Parameters.AddWithValue("@id", id);
+                    // Abre a conexão com o banco
+                    conn.Open();
 
-                    // Executa a instruçao DELETE e armazena quantas linhas foram afetadas
-                    int rowsAffected = cmd.ExecuteNonQuery();
+                    // Comando SQL que exclui objeto se ele tiver o id igual ao id recebido
+                    string sql = "DELETE FROM produtos WHERE Id = @Id";
 
-                    if (rowsAffected == 0)
+                    // Cria um comando SQL vinculado a conexao aberta
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
                     {
-                        throw new Exception($"Produto com ID {id} nao encontrado");
+                        // Adiciona o parametro @estoqueId e define seu valor
+                        // Isso previne SQL Injection e garante tipagem correta
+                        cmd.Parameters.AddWithValue("@id", id);
+
+                        // Executa a instruçao DELETE e armazena quantas linhas foram afetadas
+                        int rowsAffected = cmd.ExecuteNonQuery();
+
+                        if (rowsAffected == 0)
+                        {
+                            throw new Exception($"Produto com ID {id} nao encontrado");
+                        }
                     }
                 }
+            }
+
+            catch (MySqlException ex)
+            {
+                _logger.LogError(ex, "Erro ao deletar o produto.");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao deletar o produto.");
             }
         }
 
@@ -305,33 +351,46 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PARA VERIFICAR DUPLICIDADE DE NOME DE PRODUTO
         public bool ExistsByName(string Nome)
         {
-            // Obtem uma linha de conexao definida no appsetings.json
-            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-            // Cria uma conexao MySQL usando a string acima
-            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
-            using (MySqlConnection conn = new MySqlConnection(conexao))
+            try
             {
-                // Abre a conexão com o banco
-                conn.Open();
+                // Obtem uma linha de conexao definida no appsetings.json
+                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
-                // Comando SQL para contar quantos registros tem o nome informado
-                string sql = "SELECT COUNT(*) FROM produtos WHERE nome = @nome";
-
-                // Cria um comando SQL vinculado a conexao aberta
-                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                // Cria uma conexao MySQL usando a string acima
+                // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+                using (MySqlConnection conn = new MySqlConnection(conexao))
                 {
-                    // Adiciona o parametro @nome e define seu valor
-                    // Isso previne SQL Injection e garante tipagem correta
-                    cmd.Parameters.AddWithValue("@Nome", Nome);
+                    // Abre a conexão com o banco
+                    conn.Open();
 
-                    // Executa o comando e retorna o primeiro valor da lista
-                    // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    // Comando SQL para contar quantos registros tem o nome informado
+                    string sql = "SELECT COUNT(*) FROM produtos WHERE nome = @nome";
 
-                    // Retorna true se existir ao menos 1 registro com esse nome
-                    return count > 0;
+                    // Cria um comando SQL vinculado a conexao aberta
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        // Adiciona o parametro @nome e define seu valor
+                        // Isso previne SQL Injection e garante tipagem correta
+                        cmd.Parameters.AddWithValue("@Nome", Nome);
+
+                        // Executa o comando e retorna o primeiro valor da lista
+                        // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        // Retorna true se existir ao menos 1 registro com esse nome
+                        return count > 0;
+                    }
                 }
+            }
+
+            catch (MySqlException ex)
+            {
+                _logger.LogError(ex, "Erro ao verificar o nome.");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao verificar o nome.");
             }
         }
 
@@ -339,33 +398,46 @@ namespace CadastroProdutoMySQL.Dados
         // METODO PARA VERIFICAR DUPLICIDADE DE INDICE DE ESTOQUE
         public bool ExistsByEstoqueId(int EstoqueId)
         {
-            // Obtem uma linha de conexao definida no appsetings.json
-            string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-            // Cria uma conexao MySQL usando a string acima
-            // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
-            using (MySqlConnection conn = new MySqlConnection(conexao))
+            try
             {
-                // Abre a conexão com o banco
-                conn.Open();
+                // Obtem uma linha de conexao definida no appsetings.json
+                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
-                // Comando SQL para contar quantos registros tem o nome informado
-                string sql = "SELECT COUNT(*) FROM estoque WHERE estoqueId = @estoqueId";
-
-                // Cria um comando SQL vinculado a conexao aberta
-                using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                // Cria uma conexao MySQL usando a string acima
+                // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
+                using (MySqlConnection conn = new MySqlConnection(conexao))
                 {
-                    // Adiciona o parametro @estoqueId e define seu valor
-                    // Isso previne SQL Injection e garante tipagem correta
-                    cmd.Parameters.AddWithValue("@estoqueId", EstoqueId);
+                    // Abre a conexão com o banco
+                    conn.Open();
 
-                    // Executa o comando e retorna o primeiro valor da lista
-                    // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
-                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    // Comando SQL para contar quantos registros tem o nome informado
+                    string sql = "SELECT COUNT(*) FROM estoque WHERE estoqueId = @estoqueId";
 
-                    // Retorna true se existir ao menos 1 registro com esse nome
-                    return count > 0;
+                    // Cria um comando SQL vinculado a conexao aberta
+                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
+                    {
+                        // Adiciona o parametro @estoqueId e define seu valor
+                        // Isso previne SQL Injection e garante tipagem correta
+                        cmd.Parameters.AddWithValue("@estoqueId", EstoqueId);
+
+                        // Executa o comando e retorna o primeiro valor da lista
+                        // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        // Retorna true se existir ao menos 1 registro com esse nome
+                        return count > 0;
+                    }
                 }
+            }
+
+            catch (MySqlException ex)
+            {
+                _logger.LogError(ex, "Erro ao verificar a existencia EstoqueId.");
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro inesperado ao verificar a existencia EstoqueId.");
             }
         }
     }
