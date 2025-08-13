@@ -22,7 +22,7 @@ namespace CadastroProdutoMySQL.Dados
         {
             List<Estoque> listaEstoque = new List<Estoque>();
 
-            // Define uma linha de conexão com o banco de dados
+            // Obtem uma linha de conexao definida no appsetings.json
             string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexao com banco usando a string acima
@@ -31,7 +31,7 @@ namespace CadastroProdutoMySQL.Dados
                 // Abre a conexao com o banco
                 conn.Open();
 
-                // Define o comando SQL para buscar todos os valores de estoque
+                // Comando SQL para buscar todos os valores de estoque
                 string sql = "SELECT * FROM estoque";
 
                 // Prepara o comando SQL para execuçao no banco
@@ -67,7 +67,7 @@ namespace CadastroProdutoMySQL.Dados
         {
             Estoque estoqueEncontrado = null;
 
-            // Define uma linha de conexão com o banco de dados
+            // Obtem uma linha de conexao definida no appsetings.json
             string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
             // Cria um objeto de conexao com banco usando a string acima
@@ -76,7 +76,7 @@ namespace CadastroProdutoMySQL.Dados
                 // Abre a conexao com o banco
                 conn.Open();
 
-                // Define o comando SQL para buscaro indice de estoque pelo ID
+                // Comando SQL para buscaro indice de estoque pelo ID
                 string sql = "SELECT * FROM estoque WHERE Id = @id";
 
                 // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
@@ -108,16 +108,16 @@ namespace CadastroProdutoMySQL.Dados
         // METODO QUE CADASTRA ESTOQUE
         public void CadastraEstoqueRepository(Estoque novoEstoque)
         {
-            // Define uma linha de conexao com o banco de dados
+            // Obtem uma linha de conexao definida no appsetings.json
             string conexao = _configuration.GetConnectionString("ConexaoPadrao");
 
-            // Cria um objeto de conexão com o banco usando a string acima
+            // Cria um objeto de conexão MySQL com o banco usando a string acima
             using (MySqlConnection conn = new MySqlConnection(conexao))
             {
                 // Abre a conexão com o banco
                 conn.Open();
 
-                // Define o comando SQL para buscar todos os produtos
+                // Comando SQL para buscar todos os objetos
                 string sql = "INSERT INTO estoque (Id, Quantidade) VALUES (@Id, @Quantidade)";
 
                 // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)

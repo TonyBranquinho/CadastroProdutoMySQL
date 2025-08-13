@@ -6,9 +6,12 @@
         public long Id { get; set; }
         public int Quantidade { get; set; }
 
+
+
         public EstoqueRespostaDTO()
         {
         }
+
 
         public EstoqueRespostaDTO(long id, int quantidade)
         {

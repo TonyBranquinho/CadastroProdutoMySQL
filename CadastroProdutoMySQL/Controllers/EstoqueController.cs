@@ -11,6 +11,7 @@ namespace CadastroProdutoMySQL.Controllers
     ControllerBase que é a classe base da Microsoft para controller API */
     public class EstoqueController : ControllerBase
     {   
+
         // Campo privado/ atribuido somente uma vez/ tipo campo / nome do campo - Instancia a classe de operaçoes do banco
         private readonly EstoqueServico _estoqueServico;
 
@@ -28,18 +29,16 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
-    // Metodo que recebe um novo cadastro de estoque
-    [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
+    // METODO QUE CADASTRA UM NOVO INDICE DE ESTOQUE
+    [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST
         public IActionResult Post([FromBody] EstoqueCriacaoDTO estoqueDTO)
         {
-            // Verifica se os dados enviados passaram nas avaliaçoes da classe ProdutoCriacaoDTO
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState); // Retorna BadRequest 400 com detalhes dos erros
-            }
+            // o atributo [ApiController] ja faz a validaçao dos parametros do DTO ([Required]),
 
             // Chama o metodo que faz o cadastro dos novos dados de estoque
             EstoqueRespostaDTO resp = _estoqueServico.CadastraEstoque(estoqueDTO);
+
+
 
             // Facilita a vida do FRONTEND,
             // retornar 201 Created com URL do nvo recurso.
