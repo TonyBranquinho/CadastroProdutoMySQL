@@ -53,7 +53,7 @@ using Microsoft.AspNetCore.Http; // Fornece classes para lidar com requisições
 using Microsoft.Extensions.Logging; // Fornece a interface de logging (para registrar mensagens de log)
 using System; // Classes básicas do .NET (Exception, etc.)
 using System.Net; // Para usar códigos de status HTTP (ex.: 200, 404, 500)
-using System.Text.Json; // Para transformar objetos em JSON
+using System.Text.Json; // Para transformar objetos em JSO
 
 public class ErrorHandlingMiddleware
 {
