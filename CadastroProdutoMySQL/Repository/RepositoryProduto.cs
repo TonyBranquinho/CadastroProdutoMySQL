@@ -12,13 +12,14 @@ namespace CadastroProdutoMySQL.Dados
         // privado/somente leitura/interface/campo
         private readonly IConfiguration _configuration;
 
+        private readonly ILogger<RepositoryProduto> _logger;
 
         // Construtor que inicializa os campos e recebe Iconfiguration por injeçao de dependecia
-        public RepositoryProduto(IConfiguration configuration)
+        public RepositoryProduto(IConfiguration configuration, ILogger<RepositoryProduto> logger)
         {
             // Armazena o Iconfiguration recebido no campo privado para uso posterior
             _configuration = configuration;   // Inicializa
-
+            _logger = logger;
         }
 
 
@@ -288,11 +289,13 @@ namespace CadastroProdutoMySQL.Dados
             catch (MySqlException ex)
             {
                 _logger.LogError(ex, "Erro ao atualizar o produto.");
+                throw;
             }
 
             catch (Exception ex)
             {
                 _logger.LogError(ex, " Erro inesperado ao atualizar o produto.");
+                throw;
             }
         }
 
@@ -336,11 +339,13 @@ namespace CadastroProdutoMySQL.Dados
             catch (MySqlException ex)
             {
                 _logger.LogError(ex, "Erro ao deletar o produto.");
+                throw;
             }
 
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro inesperado ao deletar o produto.");
+                throw;
             }
         }
 
@@ -386,11 +391,13 @@ namespace CadastroProdutoMySQL.Dados
             catch (MySqlException ex)
             {
                 _logger.LogError(ex, "Erro ao verificar o nome.");
+                throw;
             }
 
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro inesperado ao verificar o nome.");
+                throw;
             }
         }
 
@@ -433,11 +440,13 @@ namespace CadastroProdutoMySQL.Dados
             catch (MySqlException ex)
             {
                 _logger.LogError(ex, "Erro ao verificar a existencia EstoqueId.");
+                throw;
             }
 
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Erro inesperado ao verificar a existencia EstoqueId.");
+                throw;
             }
         }
     }
