@@ -86,8 +86,8 @@ namespace CadastroProdutoMySQL.Dados
                 return listaP;
             }
 
-
-            catch (MySqlException ex) // Se o erro veio do banco de dados
+            // Captura o erro veio do banco de dados
+            catch (MySqlException ex) // ex é o objeto que contem os detalhes do erro como mensagem, codigo, e stack trace
             {
                 // Registra no log que houve um erro ao buscar produtos
                 _logger.LogError(ex, "Erro ao inserir produto no banco de dados");

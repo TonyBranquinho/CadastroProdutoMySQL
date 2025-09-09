@@ -15,8 +15,10 @@ builder.Services.AddScoped<ProdutoServico>();
 builder.Services.AddScoped<RepositoryProduto>();
 builder.Services.AddScoped<EstoqueServico>();
 builder.Services.AddScoped<RepositoryEstoque>();
-builder.Services.AddScoped<CategoriaServico>();
+//builder.Services.AddScoped<CategoriaServico>();
 builder.Services.AddScoped<RepositoryCategoria>();
+
+
 
 var app = builder.Build();
 
@@ -26,6 +28,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 
