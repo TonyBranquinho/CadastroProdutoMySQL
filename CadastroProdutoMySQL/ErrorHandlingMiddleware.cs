@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.Http; // Fornece classes para lidar com requisiçoes e resposta http
-using Microsoft.Extensions.Logging; // Fornece a interface de logging (para registrar mensagens de log 
+﻿using Microsoft.AspNetCore.Http; // Fornece classes (HttpContext, RequestDelegate, StatusCodes) para lidar com requisiçoes e resposta http
+using Microsoft.Extensions.Logging; // Fornece a interface de logging Ilogger para registrar mensagens de log 
 using System; // Classes básicas do .NET (exception, etc.)
 using System.Net; // Para usar códigos de status HTTP (ex.: 200, 404, 500)
-using System.Text.Json; // Para transformar objetos em JSON
+using System.Text.Json; // Para transformar objetos em JSON (serializaçao)
 
 namespace CadastroProdutoMySQL
     
 {
     public class ErrorHandlingMiddleware
     {
-        // Variável para guardar a referência do proximo middleware da pipeline
+        // CAMPOS PRIVADOS
+        // Campo para guardar a referência do proximo componente da pipeline
         private readonly RequestDelegate _next;
 
         // Variavel para fazer logging (registrar erros, avisos, informaçoes)
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
+        
+        
         // Constutor que recebe o proximo middleware e o logger por injeçao de dependência
         public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
@@ -22,12 +25,15 @@ namespace CadastroProdutoMySQL
             _logger = logger; // Guarda a ferramenta de logging
         }
 
+
+
         // Metodo principal que o ASP.NET Core executa para processar a requisiçao
         public void Invoke(HttpContext context)
         {
             try
             {
-                // Chama o próximo middleware na pipeline (síncrono)
+                // Continua para o proximo middleware na pipeline
+                // Usamos .Wait() pois o código do projeto é síncrono
                 _next(context).Wait();
             }
 
@@ -48,6 +54,13 @@ namespace CadastroProdutoMySQL
             }
         }
 }
+///////////////////////////////////////////////////////////////////
+
+// EMBAIXO ESTA A CLASSE COMPLETA PROPOSTA PELO CHAT
+
+//////////////////////////////////////////////////////////////////
+
+/*
 // Importa as bibliotecas necessárias
 using Microsoft.AspNetCore.Http; // Fornece classes para lidar com requisições e respostas HTTP
 using Microsoft.Extensions.Logging; // Fornece a interface de logging (para registrar mensagens de log)
@@ -136,3 +149,4 @@ public class ErrorHandlingMiddleware
     }
 }
 }
+*/
