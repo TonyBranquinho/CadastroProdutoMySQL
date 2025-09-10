@@ -5,7 +5,7 @@ using System.Net; // Para usar códigos de status HTTP (ex.: 200, 404, 500)
 using System.Text.Json; // Para transformar objetos em JSON (serializaçao)
 
 namespace CadastroProdutoMySQL
-    
+
 {
     public class ErrorHandlingMiddleware
     {
@@ -16,8 +16,8 @@ namespace CadastroProdutoMySQL
         // Variavel para fazer logging (registrar erros, avisos, informaçoes)
         private readonly ILogger<ErrorHandlingMiddleware> _logger;
 
-        
-        
+
+
         // Constutor que recebe o proximo middleware e o logger por injeçao de dependência
         public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
         {
@@ -28,32 +28,44 @@ namespace CadastroProdutoMySQL
 
 
         // Metodo principal que o ASP.NET Core executa para processar a requisiçao
-        public void Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
             try
             {
                 // Continua para o proximo middleware na pipeline
-                // Usamos .Wait() pois o código do projeto é síncrono
-                _next(context).Wait();
+                await _next(context);
             }
 
-            catch (AggregateException aggEx) // Quando usa .Wait(), erros vem agrupados
-            {
-                // Pega o erro real dentro do AggregateException
-                var ex = aggEx.InnerException ?? aggEx;
-                _logger.LogError(ex, "Erro nao tratado.");
-                HandleException(context, ex);
-            }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro nao tratado.");
-                HandleException(context, ex);
-            }
+                // Define que o corpo da resposta será JSON (padrão esperado para APIs REST)
+                context.Response.ContentType = "application/json";
 
-            PrivateKeyFactory void 
+                // Defie o código HTTP da resposta como 500 (Internal Server Error)
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+                // Registra o erro nos logs (stack trace fica guardado no servidor)  
+                _logger.LogError(ex, "Erro nao tratado.");
+
+
+                // Cria um objeto com os dados que devem retornar ao cliente
+                var errorResponse = new
+                {
+                    statusCode = context.Response.StatusCode, // reutiliza o código acima
+                    message = "Ocorreu um erro inesperado."   // mensagem amigável para o cliente
+                };
+
+                // Serializa o objeto para uma string JSON
+                string result = JsonSerializer.Serialize(errorResponse);
+
+                // Escreve a string JSON no corpo da resposta de forma assíncrona
+                await context.Response.WriteAsync(result);
+
             }
         }
+    }
 }
+
 ///////////////////////////////////////////////////////////////////
 
 // EMBAIXO ESTA A CLASSE COMPLETA PROPOSTA PELO CHAT
