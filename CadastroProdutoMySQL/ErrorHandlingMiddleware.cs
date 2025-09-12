@@ -10,11 +10,10 @@ namespace CadastroProdutoMySQL
     public class ErrorHandlingMiddleware
     {
         // CAMPOS PRIVADOS
-        // Campo para guardar a referência do proximo componente da pipeline
-        private readonly RequestDelegate _next;
 
-        // Variavel para fazer logging (registrar erros, avisos, informaçoes)
-        private readonly ILogger<ErrorHandlingMiddleware> _logger;
+        private readonly RequestDelegate _next; // Campo para guardar a referência do proximo componente da pipeline
+
+        private readonly ILogger<ErrorHandlingMiddleware> _logger; // Variavel para fazer logging (registrar erros, avisos, informaçoes)
 
 
 
@@ -32,34 +31,29 @@ namespace CadastroProdutoMySQL
         {
             try
             {
-                // Continua para o proximo middleware na pipeline
-                await _next(context);
+                await _next(context); // Continua para o proximo middleware na pipeline
             }
 
             catch (Exception ex)
             {
-                // Define que o corpo da resposta será JSON (padrão esperado para APIs REST)
-                context.Response.ContentType = "application/json";
 
-                // Defie o código HTTP da resposta como 500 (Internal Server Error)
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+                context.Response.ContentType = "application/json"; // Define que o corpo da resposta será JSON (padrão esperado para APIs REST)
 
-                // Registra o erro nos logs (stack trace fica guardado no servidor)  
-                _logger.LogError(ex, "Erro nao tratado.");
+                context.Response.StatusCode = StatusCodes.Status500InternalServerError; // Defie o código HTTP da resposta como 500 (Internal Server Error)
+
+                _logger.LogError(ex, "Erro nao tratado."); // Registra o erro nos logs (stack trace fica guardado no servidor)
 
 
-                // Cria um objeto com os dados que devem retornar ao cliente
-                var errorResponse = new
+                var errorResponse = new // Cria um objeto com os dados que devem retornar ao cliente
                 {
                     statusCode = context.Response.StatusCode, // reutiliza o código acima
                     message = "Ocorreu um erro inesperado."   // mensagem amigável para o cliente
                 };
 
-                // Serializa o objeto para uma string JSON
-                string result = JsonSerializer.Serialize(errorResponse);
 
-                // Escreve a string JSON no corpo da resposta de forma assíncrona
-                await context.Response.WriteAsync(result);
+                string result = JsonSerializer.Serialize(errorResponse); // Serializa o objeto para uma string JSON
+
+                await context.Response.WriteAsync(result); // Escreve a string JSON no corpo da resposta de forma assíncrona
 
             }
         }
@@ -72,7 +66,7 @@ namespace CadastroProdutoMySQL
 
 //////////////////////////////////////////////////////////////////
 
-/*
+
 // Importa as bibliotecas necessárias
 using Microsoft.AspNetCore.Http; // Fornece classes para lidar com requisições e respostas HTTP
 using Microsoft.Extensions.Logging; // Fornece a interface de logging (para registrar mensagens de log)
