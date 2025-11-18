@@ -18,7 +18,7 @@ namespace CadastroProdutoMySQL.Dados
         public RepositoryProduto(IConfiguration configuration, ILogger<RepositoryProduto> logger)
         {
             // Armazena o Iconfiguration recebido no campo privado para uso posterior
-            _configuration = configuration;   // Inicializa
+            _configuration = configuration;   // Inicializa .
             _logger = logger;
         }
 
