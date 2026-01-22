@@ -42,12 +42,16 @@ builder.Services.AddSingleton(builder.Configuration.GetConnectionString("Conexao
 
 var app = builder.Build();
 
+app.UseSwagger();
+app.UseSwaggerUI();
+
+// para rodar quando o banco estiver no meu pc
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
