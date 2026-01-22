@@ -36,7 +36,7 @@ namespace CadastroProdutoMySQL.Controllers
             // Chama o metodo que retorna os produtos
             List<ProdutoDetalhadoDTO> listaProdutos = _produtoServico.ListarTodos();
 
-            if (listaProdutos != null)
+            if (listaProdutos == null )
             {
                 return NotFound();
             }

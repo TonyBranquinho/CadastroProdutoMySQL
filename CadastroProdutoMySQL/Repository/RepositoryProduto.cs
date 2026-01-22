@@ -47,15 +47,16 @@ namespace CadastroProdutoMySQL.Dados
                 {
                     // Abre a conexão com o banco
                     conn.Open();
+                    _logger.LogInformation("Conexão aberta com sucesso");////////////////////
 
                     // Comando SQL para buscar todos os produtos
                     string sql = "SELECT " +
                                     "p.Id, p.Nome, p.Preco, " +
                                     "p.CategoriaId, p.EstoqueId, " +
                                     "c.Nome AS NomeCategoria, e.Quantidade " +
-                                    "FROM produtos p " +
-                                    "JOIN Categoria c ON p.CategoriaId = c.Id " +
-                                    "JOIN Estoque e ON p.EstoqueId = e.Id";
+                                    "FROM produto p " +
+                                    "JOIN categoria c ON p.CategoriaId = c.Id " +
+                                    "JOIN estoque e ON p.EstoqueId = e.Id";
 
 
                     // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
@@ -65,12 +66,20 @@ namespace CadastroProdutoMySQL.Dados
                         // Executa a consulta e retornar um leitor que percorre os resultados
                         using (MySqlDataReader reader = cmd.ExecuteReader())
                         {
+                            _logger.LogInformation("Query executada");///////////////////
 
                             // Enquanto houver linhas pra ler no resultado
+                            int contador = 0;////////////////////////////
                             while (reader.Read())
                             {
+                                contador++;
+                                _logger.LogInformation($"Lendo linha {contador}");//////////////////////
+
                                 // Cria um novo objeto Produto
                                 produto = new Produto();
+
+                                produto.Categoria = new Categoria();
+                                produto.Estoque = new Estoque();
 
                                 produto.Id = reader.GetInt32("Id");
                                 produto.Nome = reader.GetString("Nome");
@@ -80,9 +89,12 @@ namespace CadastroProdutoMySQL.Dados
 
                                 listaP.Add(produto);
                             }
+                            _logger.LogInformation($"Total de produtos lidos: {contador}");//////////////////
+                            _logger.LogInformation($"Total na lista: {listaP.Count}");/////////////////////
                         }
                     }
                 }
+                _logger.LogInformation($"Retornando {listaP.Count} produtos");////////////////////////
                 return listaP;
             }
 
@@ -99,6 +111,7 @@ namespace CadastroProdutoMySQL.Dados
             {
                 // Registra no log que houve um erro inesperado, com todos os detalhes
                 _logger.LogError(ex, "Erro inesperado ao inserir produto.");
+                _logger.LogError(ex, "ERRO COMPLETO");/////////////////////
 
                 throw; // Joga o erro de novo para cima, igual antes, para nao "engolir" o erro
             }

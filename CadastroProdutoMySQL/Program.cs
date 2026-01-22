@@ -1,3 +1,4 @@
+using CadastroProdutoMySQL;
 using CadastroProdutoMySQL.Dados;
 using CadastroProdutoMySQL.Servicos;
 
@@ -11,12 +12,31 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+
+
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PermitirFrontEnd",
+        policy => policy
+            .AllowAnyOrigin()      // Permite qualquer origem
+            .AllowAnyMethod()      // Permite GET, POST, PUT, DELETE
+            .AllowAnyHeader());    // Permite qualquer cabeçalho
+});
+
+
+
+
+
 builder.Services.AddScoped<ProdutoServico>();
 builder.Services.AddScoped<RepositoryProduto>();
 builder.Services.AddScoped<EstoqueServico>();
 builder.Services.AddScoped<RepositoryEstoque>();
 //builder.Services.AddScoped<CategoriaServico>();
 builder.Services.AddScoped<RepositoryCategoria>();
+
+builder.Services.AddSingleton(builder.Configuration.GetConnectionString("ConexaoPadrao"));
 
 
 
@@ -31,14 +51,17 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
+app.UseCors("PermitirFrontEnd");
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
 
-var op = new CadastroProdutoMySQL.Dados.RepositoryProduto(builder.Configuration);
-op.ListarProdutos();
+
+
+//op.ListarProdutos();
 
 
 
