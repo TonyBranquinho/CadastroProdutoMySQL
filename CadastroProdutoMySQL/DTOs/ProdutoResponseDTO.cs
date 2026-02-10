@@ -1,24 +1,28 @@
 ﻿namespace CadastroProdutoMySQL.DTOs
 {
-    public class ProdutoRespAtualizacaoDTO
+    public class ProdutoResponseDTO
     {
+
         public long Id { get; set; }
         public string Nome { get; set; }
         public decimal Preco { get; set; }
+        public string Categoria { get; set; }
         public int CategoriaId { get; set; }
-        public int EstoqueId { get; set; }
+        public int Quantidade { get; set; }
 
-        public ProdutoRespAtualizacaoDTO()
+
+        public ProdutoResponseDTO()
         {
         }
 
-        public ProdutoRespAtualizacaoDTO(long id, string nome, decimal preco, int categoriaId, int estoqueId)
+        public ProdutoResponseDTO(long id, string categoria, string nome, decimal preco, int quantidade, int categoriaId)
         {
             Id = id;
+            Categoria = categoria;
             Nome = nome;
             Preco = preco;
+            Quantidade = quantidade;
             CategoriaId = categoriaId;
-            EstoqueId = estoqueId;
         }
     }
 }

@@ -31,9 +31,6 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<ProdutoServico>();
 builder.Services.AddScoped<RepositoryProduto>();
-builder.Services.AddScoped<EstoqueServico>();
-builder.Services.AddScoped<RepositoryEstoque>();
-//builder.Services.AddScoped<CategoriaServico>();
 builder.Services.AddScoped<RepositoryCategoria>();
 
 builder.Services.AddSingleton(builder.Configuration.GetConnectionString("ConexaoPadrao"));

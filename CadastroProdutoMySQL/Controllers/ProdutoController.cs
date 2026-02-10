@@ -30,11 +30,11 @@ namespace CadastroProdutoMySQL.Controllers
 
         // METODO PARA LER E LISTAR TODOS OS PRODUTOS DO BANCO DE DADOS
         [HttpGet]
-        public ActionResult<List<ProdutoDetalhadoDTO>> GetTodos()
+        public ActionResult<List<ProdutoResponseDTO>> GetTodos()
         {
             
             // Chama o metodo que retorna os produtos
-            List<ProdutoDetalhadoDTO> listaProdutos = _produtoServico.ListarTodos();
+            List<ProdutoResponseDTO> listaProdutos = _produtoServico.ListarTodos();
 
             if (listaProdutos == null )
             {
@@ -49,7 +49,7 @@ namespace CadastroProdutoMySQL.Controllers
 
         // METODO PARA LER E LISTAR UM PRODUTO SELECIONADO PELO ID
         [HttpGet("{id}")] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes GET ID - BUSCA
-        public ActionResult<ProdutoDetalhadoDTO> GetPorId(int id)
+        public ActionResult<ProdutoResponseDTO> GetPorId(int id)
         {
             // Testa validade do ID
             if (id <= 0)
@@ -71,14 +71,40 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // METODO PRA RECEBER UM NOVO PRODUTO E INSERIR NO BANCO DE DADOS
         [HttpPost] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes POST - CADASTRA
-        public IActionResult Cadastrar([FromBody] ProdutoCriacaoDTO dto)
+        public IActionResult Cadastrar([FromBody] ProdutoRequestDTO dto)
         {
             // o atributo [ApiController] ja faz a validaçao dos parametros do DTO ([Required]),
 
             // Chama o metodo CadastroProduto e manda os dados que foram descritos na ediçao
-            ProdutoRespCriacaoDTO respostaDTO = _produtoServico.CadastroProduto(dto);
+            ProdutoResponseDTO respostaDTO = _produtoServico.CadastroProduto(dto);
             
 
             // Facilita a vida do FRONTEND,
@@ -89,21 +115,52 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // METODO PRA RECEBER UM PRODUTO DO BANCO E ATUALIZA-LO
         [HttpPut("{id}")] // Diz ao ASP.NET Core que esse metodo responde a requisçoes PUT com id na rota
-        public IActionResult Atualizar(int id, [FromBody] ProdutoCriacaoDTO produtoAtualizadoDTO)
+        public IActionResult Atualizar(int id, [FromBody] ProdutoRequestDTO produtoAtualizadoDTO)
         {
             // Valida o ID da entrada
             if (id <= 0)
             {
                 return BadRequest("ID deve ser maior que zero");
             }
-                        
+
             // o atributo [ApiController] ja faz a validaçao dos parametros do DTO ([Required]),
-            
+
 
             // Chama serviço para tentar atualizar o produto no banco de dados
-            ProdutoRespAtualizacaoDTO atualizado = _produtoServico.Atualiza(produtoAtualizadoDTO, id);
+            ProdutoRequestDTO atualizado = _produtoServico.Atualiza(produtoAtualizadoDTO, id);
 
             if (atualizado == null)
             {

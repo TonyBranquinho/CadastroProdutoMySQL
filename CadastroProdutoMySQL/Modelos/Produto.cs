@@ -8,31 +8,26 @@ namespace CadastroProdutoMySQL.Modelos
         public long Id { get; set; }
         public string Nome { get; set; }
         public decimal Preco { get; set; }
+        public int Quantidade { get; set; }
 
-        public int CategoriaId {  get; set; }
-        public Categoria Categoria { get; set; }
+        public int CategoriaId { get; set; }
+        public Categoria Categoria {  get; set; }
 
-
-        public int EstoqueId {  get; set; }
-        public Estoque Estoque { get; set; }
-
-
+      
         // Construtor vazio
         public Produto()
         {
-            Categoria = new Categoria();
-            Estoque = new Estoque();
         }
 
 
         // Construtor com parametros
-        public Produto(long id, string nome, decimal preco, int categoriaId, int estoqueId)
+        public Produto(long id, string nome, decimal preco, int quantidade, int categoriaId)
         {
             Id = id;
             Nome = nome;
             Preco = preco;
-            CategoriaId = categoriaId;
-            EstoqueId = estoqueId;
+            Quantidade = quantidade;
+            CategoriaId = categoriaId;            
         }
     }
 }

@@ -12,19 +12,21 @@ namespace CadastroProdutoMySQL.Servicos
     {
 
         private readonly RepositoryProduto _repositoryProduto;
+        private readonly RepositoryCategoria _repositoryCategoria;
 
 
         // Construtor que recebe RepositoryProduto por injeçao e dependencia
-        public ProdutoServico(RepositoryProduto repositoryProduto)
+        public ProdutoServico(RepositoryProduto repositoryProduto, RepositoryCategoria repositoryCategoria)
         {
             _repositoryProduto = repositoryProduto;
+            _repositoryCategoria = repositoryCategoria;
         }
 
 
 
 
         // METODO GET
-        public List<ProdutoDetalhadoDTO> ListarTodos()
+        public List<ProdutoResponseDTO> ListarTodos()
         {
             // Chama na Repository o metodo para listar o os produtos
             List<Produto> retorno = _repositoryProduto.ListarProdutos();
@@ -35,19 +37,19 @@ namespace CadastroProdutoMySQL.Servicos
             }
 
             // Instancia lista para impressao
-            List<ProdutoDetalhadoDTO> listaProdutoDetalhadoDTO = new List<ProdutoDetalhadoDTO>();
+            List<ProdutoResponseDTO> listaProdutoDetalhadoDTO = new List<ProdutoResponseDTO>();
 
 
             // Mapeia o retorno PRODUTO da repository para a lista de impressao DTO
             foreach (Produto p in retorno)
             {
-                ProdutoDetalhadoDTO produtoDetalhadoDTO = new ProdutoDetalhadoDTO();
+                ProdutoResponseDTO produtoDetalhadoDTO = new ProdutoResponseDTO();
 
                 produtoDetalhadoDTO.Id = p.Id;
                 produtoDetalhadoDTO.Nome = p.Nome;
                 produtoDetalhadoDTO.Preco = p.Preco;
                 produtoDetalhadoDTO.Categoria = p.Categoria.Nome;
-                produtoDetalhadoDTO.Quantidade = p.Estoque.Quantidade;
+                produtoDetalhadoDTO.Quantidade = p.Quantidade;
 
                 listaProdutoDetalhadoDTO.Add(produtoDetalhadoDTO);
             }
@@ -59,7 +61,7 @@ namespace CadastroProdutoMySQL.Servicos
 
 
         // METODO GET ID
-        public ProdutoDetalhadoDTO BuscaId(int id)
+        public ProdutoResponseDTO BuscaId(int id)
         {
             Produto buscaProduto = _repositoryProduto.BuscarProdutoId(id);
 
@@ -68,20 +70,37 @@ namespace CadastroProdutoMySQL.Servicos
                 return null;
             }
 
-            return new ProdutoDetalhadoDTO
+            return new ProdutoResponseDTO
             {
                 Id = buscaProduto.Id,
                 Nome = buscaProduto.Nome,
                 Preco = buscaProduto.Preco,
                 Categoria = buscaProduto.Categoria.Nome,
-                Quantidade = buscaProduto.Estoque.Quantidade,
+                Quantidade = buscaProduto.Quantidade,
             };
         }
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         // METODO - POST
-        public ProdutoRespCriacaoDTO CadastroProduto(ProdutoCriacaoDTO dto)
+        // Recebe um DTO request, e devolve um DTO response
+        public ProdutoResponseDTO CadastroProduto(ProdutoRequestDTO dto)
         {
             // Regra de negocio: Verifica duplicidade
             if (_repositoryProduto.ExistsByName(dto.Nome))
@@ -89,12 +108,7 @@ namespace CadastroProdutoMySQL.Servicos
                 return null; // Controller vai traduzir para HTTP 409
             }
 
-            if (_repositoryProduto.ExistsByEstoqueId(dto.EstoqueId))
-            {
-                return null; // Controller vai traduzir para HTTP 409
-            }
-
-
+            
             // Mapeia o DTO para um Produto (modelo do dominio),
             // para evitar exposiçao de campos indesejados (Mais segurança)
             Produto novoProduto = new Produto
@@ -102,22 +116,27 @@ namespace CadastroProdutoMySQL.Servicos
                 Nome = dto.Nome,
                 Preco = dto.Preco,
                 CategoriaId = dto.CategoriaId,
-                EstoqueId = dto.EstoqueId,
+                Quantidade = dto.Quantidade,
             };
-
 
             // Chama o metodo que adiciona o novo produto no Banco de Dados
             _repositoryProduto.InserirProduto(novoProduto);
 
 
+            // Chama o listar categoria por id para trazer para o dto o nome da categoria
+            Categoria categoria = _repositoryCategoria.ListarCategoriaId(dto.CategoriaId);
+
 
             // Cria um objeto ProdutoRespostaDTO com os dados que voltam para o cliente
             // isso evita expor propriedades desnecessarias e ou sensiveis do produto
-            ProdutoRespCriacaoDTO respostaDTO = new ProdutoRespCriacaoDTO
-            {
+            ProdutoResponseDTO respostaDTO = new ProdutoResponseDTO
+            {   
                 Id = novoProduto.Id,
-                Nome = novoProduto.Nome,
-                Preco = novoProduto.Preco,
+                Nome = dto.Nome,
+                Preco = dto.Preco,
+                Categoria = categoria.Nome,
+                CategoriaId = dto.CategoriaId,
+                Quantidade = dto.Quantidade,
             };
 
             return respostaDTO;
@@ -125,8 +144,21 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
         // METODO - PUT 
-        public ProdutoRespAtualizacaoDTO Atualiza(ProdutoCriacaoDTO produtoAtualizadoDTO, long id)
+        public ProdutoRequesDTO Atualiza(ProdutoRequestDTO produtoAtualizadoDTO, long id)
         {
             Produto produtoAtualizado = new Produto
             {
@@ -134,18 +166,18 @@ namespace CadastroProdutoMySQL.Servicos
                 Nome = produtoAtualizadoDTO.Nome,
                 Preco = produtoAtualizadoDTO.Preco,
                 CategoriaId = produtoAtualizadoDTO.CategoriaId,
-                EstoqueId = produtoAtualizadoDTO.EstoqueId,
+                Quantidade = produtoAtualizadoDTO.Quantidade,
             };
 
             _repositoryProduto.AtualizarProduto(produtoAtualizado);
 
-            ProdutoRespAtualizacaoDTO Resp = new ProdutoRespAtualizacaoDTO
+            ProdutoRequesDTO Resp = new ProdutoRequesDTO
             {
                 Id = id,
                 Nome = produtoAtualizado.Nome,
                 Preco = produtoAtualizado.Preco,
                 CategoriaId = produtoAtualizado.CategoriaId,
-                EstoqueId = produtoAtualizado.EstoqueId,
+                Quantidade = produtoAtualizado.Quantidade,
             };
 
             return Resp;

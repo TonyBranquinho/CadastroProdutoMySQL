@@ -32,7 +32,6 @@ namespace CadastroProdutoMySQL.Dados
             try // Tenta rodar o codigo normalmente
             {
 
-
                 // Cria uma lsita pra armazenas os produtos recuperados do banco
                 List<Produto> listaP = new List<Produto>();
 
@@ -50,13 +49,16 @@ namespace CadastroProdutoMySQL.Dados
                     _logger.LogInformation("Conexão aberta com sucesso");////////////////////
 
                     // Comando SQL para buscar todos os produtos
-                    string sql = "SELECT " +
-                                    "p.Id, p.Nome, p.Preco, " +
-                                    "p.CategoriaId, p.EstoqueId, " +
-                                    "c.Nome AS NomeCategoria, e.Quantidade " +
-                                    "FROM produto p " +
-                                    "JOIN categoria c ON p.CategoriaId = c.Id " +
-                                    "JOIN estoque e ON p.EstoqueId = e.Id";
+                    string sql = @"
+                        SELECT
+                            p.Id,
+                            p.Nome,
+                            p.Preco,
+                            p.CategoriaId,
+                            p.Quantidade,
+                            c.Nome AS NomeCategoria
+                        FROM produto p
+                        JOIN categoria c ON p.CategoriaId = c.Id ";
 
 
                     // Prepara o comando SQL para execuçao no banco (using garante limpeza automatica da memoria)
@@ -79,13 +81,13 @@ namespace CadastroProdutoMySQL.Dados
                                 produto = new Produto();
 
                                 produto.Categoria = new Categoria();
-                                produto.Estoque = new Estoque();
 
                                 produto.Id = reader.GetInt32("Id");
                                 produto.Nome = reader.GetString("Nome");
                                 produto.Preco = reader.GetDecimal("Preco");
+                                produto.Quantidade = reader.GetInt32("Quantidade");
                                 produto.Categoria.Nome = reader.GetString("NomeCategoria");
-                                produto.Estoque.Quantidade = reader.GetInt32("Quantidade");
+                                
 
                                 listaP.Add(produto);
                             }
@@ -124,7 +126,6 @@ namespace CadastroProdutoMySQL.Dados
         {
             try
             {
-
                 // Cria um novo objeto DTO para imprimir de maneira organizada
                 Produto produtoEncontrado = null;
 
@@ -139,14 +140,17 @@ namespace CadastroProdutoMySQL.Dados
                     conn.Open();
 
                     // Comando SQL para buscar o produto usando JOIN
-                    string sql = "SELECT " +
-                                    "p.Id, p.Nome, p.Preco, " +
-                                    "p.CategoriaId, c.Nome AS CategoriaNome, " +
-                                    "p.EstoqueId, e.Quantidade " +
-                                 "FROM produtos p " +
-                                 "JOIN categoria c ON p.CategoriaId = c.Id " +
-                                 "JOIN estoque e ON p.EstoqueId = e.Id " +
-                                 "WHERE p.Id = @Id";
+                    string sql = @"
+                        SELECT
+                            p.Id,
+                            p.Nome,
+                            p.Preco,
+                            p.CategoriaId,
+                            c.Nome AS CategoriaNome,
+                            p.Quantidade
+                        FROM produtos p
+                        JOIN categoria c ON p.CategoriaId = c.Id
+                        WHERE p.Id = @Id";
 
                     // Cria um comando SQL a partir da conexão aberta e do texto SQL
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
@@ -167,7 +171,7 @@ namespace CadastroProdutoMySQL.Dados
                                 produtoEncontrado.Nome = reader.GetString("Nome");
                                 produtoEncontrado.Preco = reader.GetDecimal("Preco");
                                 produtoEncontrado.Categoria.Nome = reader.GetString("CategoriaNome");
-                                produtoEncontrado.Estoque.Quantidade = reader.GetInt32("Quantidade");
+                                produtoEncontrado.Quantidade = reader.GetInt32("Quantidade");
                             }
                         }
                     }
@@ -207,8 +211,9 @@ namespace CadastroProdutoMySQL.Dados
                     conn.Open();
 
                     // Comando SQL INSERT com parametros pra evitar SQL Injection
-                    string sql = "INSERT INTO produtos (Nome, Preco, CategoriaId, EstoqueId) " +
-                                 "VALUES (@Nome, @Preco, @CategoriaId, @EstoqueId)";
+                    string sql = @"
+                        INSERT INTO produtos (Nome, Preco, CategoriaId, Quantidade)
+                        VALUES (@Nome, @Preco, @CategoriaId, @Quantidade)";
 
 
                     // Cria um comando SQL a partir da conexão aberta e do texto SQL
@@ -219,7 +224,7 @@ namespace CadastroProdutoMySQL.Dados
                         cmd.Parameters.AddWithValue("@Nome", novoProduto.Nome);
                         cmd.Parameters.AddWithValue("@Preco", novoProduto.Preco);
                         cmd.Parameters.AddWithValue("@CategoriaId", novoProduto.CategoriaId);
-                        cmd.Parameters.AddWithValue("@EstoqueId", novoProduto.EstoqueId);
+                        cmd.Parameters.AddWithValue("@Quantidade", novoProduto.Quantidade);
 
                         // Executa o comando no banco (nao retorna resultados, apenas executa)
                         cmd.ExecuteNonQuery();
@@ -275,10 +280,14 @@ namespace CadastroProdutoMySQL.Dados
                     conn.Open();
 
                     // Comando SQL UPDATE com parametros
-                    string sql = "UPDATE produtos SET " +
-                                 "Nome = @Nome, Preco = @Preco, " +
-                                 "CategoriaId = @CategoriaId, EstoqueId = @EstoqueId " +
-                                 "WHERE Id = @Id";
+                    string sql = @"
+                        UPDATE
+                            produtos SET
+                            Nome = @Nome,
+                            Preco = @Preco,
+                            CategoriaId = @CategoriaId,
+                            Quantidade = @Quantidade
+                        WHERE Id = @Id";
 
                     // Cria um comando SQL vinculado a conexao aberta
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
@@ -288,7 +297,7 @@ namespace CadastroProdutoMySQL.Dados
                         cmd.Parameters.AddWithValue("@Nome", produtoAtualizado.Nome);
                         cmd.Parameters.AddWithValue("@Preco", produtoAtualizado.Preco);
                         cmd.Parameters.AddWithValue("@CategoriaId", produtoAtualizado.CategoriaId);
-                        cmd.Parameters.AddWithValue("@EstoqueId", produtoAtualizado.EstoqueId);
+                        cmd.Parameters.AddWithValue("@Quantidade", produtoAtualizado.Quantidade);
 
                         // Executa o comando no banco e armazena quantas linhas foram afetadas
                         linhasAfetadas = cmd.ExecuteNonQuery();
@@ -382,7 +391,7 @@ namespace CadastroProdutoMySQL.Dados
                     conn.Open();
 
                     // Comando SQL para contar quantos registros tem o nome informado
-                    string sql = "SELECT COUNT(*) FROM produtos WHERE nome = @nome";
+                    string sql = "SELECT COUNT(*) FROM produto WHERE nome = @nome";
 
                     // Cria um comando SQL vinculado a conexao aberta
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))
@@ -412,55 +421,6 @@ namespace CadastroProdutoMySQL.Dados
                 _logger.LogError(ex, "Erro inesperado ao verificar o nome.");
                 throw;
             }
-        }
-
-
-        // METODO PARA VERIFICAR DUPLICIDADE DE INDICE DE ESTOQUE
-        public bool ExistsByEstoqueId(int EstoqueId)
-        {
-            try
-            {
-                // Obtem uma linha de conexao definida no appsetings.json
-                string conexao = _configuration.GetConnectionString("ConexaoPadrao");
-
-                // Cria uma conexao MySQL usando a string acima
-                // O 'using' garante que a conexao será encerrada e descartada mesmo se houver erro
-                using (MySqlConnection conn = new MySqlConnection(conexao))
-                {
-                    // Abre a conexão com o banco
-                    conn.Open();
-
-                    // Comando SQL para contar quantos registros tem o nome informado
-                    string sql = "SELECT COUNT(*) FROM estoque WHERE estoqueId = @estoqueId";
-
-                    // Cria um comando SQL vinculado a conexao aberta
-                    using (MySqlCommand cmd = new MySqlCommand(sql, conn))
-                    {
-                        // Adiciona o parametro @estoqueId e define seu valor
-                        // Isso previne SQL Injection e garante tipagem correta
-                        cmd.Parameters.AddWithValue("@estoqueId", EstoqueId);
-
-                        // Executa o comando e retorna o primeiro valor da lista
-                        // (nesse caso, o COUNT(*)) retrona um objeto, e depois converte para int
-                        int count = Convert.ToInt32(cmd.ExecuteScalar());
-
-                        // Retorna true se existir ao menos 1 registro com esse nome
-                        return count > 0;
-                    }
-                }
-            }
-
-            catch (MySqlException ex)
-            {
-                _logger.LogError(ex, "Erro ao verificar a existencia EstoqueId.");
-                throw;
-            }
-
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Erro inesperado ao verificar a existencia EstoqueId.");
-                throw;
-            }
-        }
+        }        
     }
 }

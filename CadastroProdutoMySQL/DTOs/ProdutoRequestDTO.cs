@@ -2,7 +2,7 @@
 
 namespace CadastroProdutoMySQL.DTOs
 {
-    public class ProdutoCriacaoDTO
+    public class ProdutoRequestDTO
     {
         [Required] // Data Annotations / Validaçao automatica dizendo que esse atributo é obrigatorio
         public string Nome { get; set; }
@@ -14,18 +14,18 @@ namespace CadastroProdutoMySQL.DTOs
         public int CategoriaId { get; set; }
 
         [Required] // Data Annotations / Validaçao automatica dizendo que esse atributo é obrigatorio
-        public int EstoqueId { get; set; }
+        public int Quantidade { get; set; }
 
-        public ProdutoCriacaoDTO()
+        public ProdutoRequestDTO()
         {
         }
 
-        public ProdutoCriacaoDTO(string nome, decimal preco, int categoriaId, int estoqueId)
+        public ProdutoRequestDTO(string nome, decimal preco, int categoriaId, int quantidade)
         {
             Nome = nome;
             Preco = preco;
             CategoriaId = categoriaId;
-            EstoqueId = estoqueId;
+            Quantidade = quantidade;
         }
     }
 }
