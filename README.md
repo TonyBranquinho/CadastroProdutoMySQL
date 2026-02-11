@@ -1,4 +1,8 @@
-﻿# CadastroProdutoMySQL
+[![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com)
+[![Azure](https://img.shields.io/badge/Azure-Deployed-0078D4?logo=microsoftazure)](seu-link-swagger)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+ # CadastroProdutoMySQL
 
 Esse é um sistema de cadastro e gerenciamento do produtos, categorias e estoque desenvolvido em **C#**
 com **ASP.NET Core e persistencia em **MySQL**. Segue a arquitetura em camadas e boas praticas de 
