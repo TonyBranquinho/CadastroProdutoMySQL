@@ -43,7 +43,7 @@ namespace CadastroProdutoMySQL.Controllers
 
 
         //METODO PARA LER E LISTAR UMA CATEGORIA ATRAVEZ DO ID
-        [HttpGet("{Id}")]
+        [HttpGet("{id}")]
         public ActionResult<Categoria> GetCategoriaId(int id)
         {
             // Chama o metodo que faz a leitura das categorias
@@ -73,7 +73,7 @@ namespace CadastroProdutoMySQL.Controllers
 
 
         // METODO QUE ATUALIZA UMA CATEGORIA
-        [HttpPut("{Id}")]
+        [HttpPut("{id}")]
         public IActionResult AtualizaCategoria(int id, [FromBody] Categoria categoriaAtualizada)
         {
             // Testa se o categoria é valida

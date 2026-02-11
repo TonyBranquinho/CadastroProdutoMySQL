@@ -148,7 +148,7 @@ namespace CadastroProdutoMySQL.Dados
                             p.CategoriaId,
                             c.Nome AS CategoriaNome,
                             p.Quantidade
-                        FROM produtos p
+                        FROM produto p
                         JOIN categoria c ON p.CategoriaId = c.Id
                         WHERE p.Id = @Id";
 
@@ -212,7 +212,7 @@ namespace CadastroProdutoMySQL.Dados
 
                     // Comando SQL INSERT com parametros pra evitar SQL Injection
                     string sql = @"
-                        INSERT INTO produtos (Nome, Preco, CategoriaId, Quantidade)
+                        INSERT INTO produto (Nome, Preco, CategoriaId, Quantidade)
                         VALUES (@Nome, @Preco, @CategoriaId, @Quantidade)";
 
 
@@ -282,7 +282,7 @@ namespace CadastroProdutoMySQL.Dados
                     // Comando SQL UPDATE com parametros
                     string sql = @"
                         UPDATE
-                            produtos SET
+                            produto SET
                             Nome = @Nome,
                             Preco = @Preco,
                             CategoriaId = @CategoriaId,
@@ -338,7 +338,7 @@ namespace CadastroProdutoMySQL.Dados
                     conn.Open();
 
                     // Comando SQL que exclui objeto se ele tiver o id igual ao id recebido
-                    string sql = "DELETE FROM produtos WHERE Id = @Id";
+                    string sql = "DELETE FROM produto WHERE Id = @Id";
 
                     // Cria um comando SQL vinculado a conexao aberta
                     using (MySqlCommand cmd = new MySqlCommand(sql, conn))

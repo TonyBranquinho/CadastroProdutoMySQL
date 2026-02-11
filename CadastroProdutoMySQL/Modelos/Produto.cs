@@ -17,6 +17,7 @@ namespace CadastroProdutoMySQL.Modelos
         // Construtor vazio
         public Produto()
         {
+            Categoria = new Categoria();
         }
 
 

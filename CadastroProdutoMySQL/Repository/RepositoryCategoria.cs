@@ -163,7 +163,8 @@ namespace CadastroProdutoMySQL.Dados
                 {
                     // Define o parametro @Nome com o valor
                     cmd.Parameters.AddWithValue("@Nome", categoriaAtualizada.Nome);
-                    
+                    cmd.Parameters.AddWithValue("Id", categoriaAtualizada.Id);
+
                     linhasAfetadas = cmd.ExecuteNonQuery();
                 }
             }

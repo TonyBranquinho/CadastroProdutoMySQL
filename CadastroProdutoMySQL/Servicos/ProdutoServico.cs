@@ -60,6 +60,18 @@ namespace CadastroProdutoMySQL.Servicos
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
         // METODO GET ID
         public ProdutoResponseDTO BuscaId(int id)
         {

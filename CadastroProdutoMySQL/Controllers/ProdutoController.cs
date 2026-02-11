@@ -47,6 +47,14 @@ namespace CadastroProdutoMySQL.Controllers
 
 
 
+
+
+
+
+
+
+
+
         // METODO PARA LER E LISTAR UM PRODUTO SELECIONADO PELO ID
         [HttpGet("{id}")] // Diz aos ASP.NET Core que esse metodo responde a requisiçoes GET ID - BUSCA
         public ActionResult<ProdutoResponseDTO> GetPorId(int id)
