@@ -58,7 +58,7 @@ namespace CadastroProdutoMySQL.Controllers
             }
 
             // Busca o produto pelo ID no banco de dados
-            ProdutoDetalhadoDTO produtoId = _produtoServico.BuscaId(id);
+            ProdutoResponseDTO produtoId = _produtoServico.BuscaId(id);
 
             if (produtoId == null)
             {

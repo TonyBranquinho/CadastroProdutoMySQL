@@ -158,7 +158,7 @@ namespace CadastroProdutoMySQL.Servicos
 
 
         // METODO - PUT 
-        public ProdutoRequesDTO Atualiza(ProdutoRequestDTO produtoAtualizadoDTO, long id)
+        public ProdutoRequestDTO Atualiza(ProdutoRequestDTO produtoAtualizadoDTO, long id)
         {
             Produto produtoAtualizado = new Produto
             {
@@ -171,9 +171,9 @@ namespace CadastroProdutoMySQL.Servicos
 
             _repositoryProduto.AtualizarProduto(produtoAtualizado);
 
-            ProdutoRequesDTO Resp = new ProdutoRequesDTO
+
+            ProdutoRequestDTO Resp = new ProdutoRequestDTO
             {
-                Id = id,
                 Nome = produtoAtualizado.Nome,
                 Preco = produtoAtualizado.Preco,
                 CategoriaId = produtoAtualizado.CategoriaId,
