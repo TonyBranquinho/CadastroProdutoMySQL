@@ -8,7 +8,7 @@
 
  # CadastroProdutoMySQL
 
-Esse é uma API RESTful para gestão de produtos, desenvolvida em ASP.NET Core, com persistência em MySQL utilizando ADO.NET, arquitetura em camadas e deploy automatizado no Azure via GitHub Actions.
+Essa é uma API RESTful para gestão de produtos, desenvolvida em ASP.NET Core, com persistência em MySQL utilizando ADO.NET, arquitetura em camadas e deploy automatizado no Azure via GitHub Actions.
 
 ---
 # Imagens
@@ -23,7 +23,7 @@ Esse é uma API RESTful para gestão de produtos, desenvolvida em ASP.NET Core, 
 - ![Tela principal](imagens/Azure.jpg)
 5. Tela do MySQL rodando no Aiven:
 - ![Tela principal](imagens/MySQLnoAiven.jpg)
-6. Diagrama de arquitetura do projeto:
+6. Diagrama de arquitetura do projeto: Client → Controller → Service → Repository → MySQL
 - ![Tela principal](imagens/Diagramaarquitetura.jpg)
 
 
@@ -64,26 +64,26 @@ Com uso de:
 - **Listagem de produtos**.
 - **Cadastro de Produtos**.
 - **Busca de Produto por ID**.
-- **Atualizaçao de Produto por ID**.
-- **Remoçao de Produtos por ID**.
+- **Atualização de Produto por ID**.
+- **Remoção de Produtos por ID**.
 
 - **Listagem de Categoria**.
 - **Cadastro de Categoria**.
 - **Busca de Categoria por ID**.
-- **Atualizaçao de Categoria por ID**.
-- **Remoçao de Categoria por ID**.
+- **Atualização de Categoria por ID**.
+- **Remoção de Categoria por ID**.
 
 ---
 
 ## Estrutura do projeto:
 CadastroProdutoMySQL
 - CONTROLLERS/ # Controladores da API
-- DTOS/ # Objetos de Transferencia de Dados
+- DTOS/ # Objetos de Transferência de Dados
 - MODELOS/ # Modelos de domínio
 - REPOSITORY/ # Repositório para acesso ao banco de dados
-- SERVICOS/ # Regras de negócios e lógica de aplicaçâo
-- appsettings.json # Configuraçoes de ambiente e banco
-- Program.cs # Ponto de entrada da aplicaçao
+- SERVICOS/ # Regras de negócios e lógica de aplicação
+- appsettings.json # Configurações de ambiente e banco
+- Program.cs # Ponto de entrada da aplicação
 
 ---
 
@@ -99,21 +99,22 @@ CadastroProdutoMySQL
 ## Endpoints
 
 ### Produtos
-- `Get /api/produto` - Lista todos os produtos.
-- `Get /api/produto/{id}` - Busca produto por ID. 
-- `POST /api/produto` - Cadastra novo produto. 
-- `PUT /api/produto/{id}` - Atualiza produto por ID. 
-- `DELETE /api/produto{id}` - Remove produto por ID. 
+- `Get /produto` - Lista todos os produtos.
+- `Get /produto/{id}` - Busca produto por ID. 
+- `POST /produto` - Cadastra novo produto. 
+- `PUT /produto/{id}` - Atualiza produto por ID. 
+- `DELETE /produto/{id}` - Remove produto por ID. 
 
 ### Categorias
-- `GET /api/categoria` - Lista todas as categorias.
-- `GET /api/categoria/{id}` - Busca categorias por ID.
-- `POST /api/caetgoria` - Cadastra nova categoria.
-- `PUT /api/categoria/{id}` - Atualiza categoria por ID. 
-- `DELETE /api/produto{id}` - Remove categoria por ID. 
+- `GET /acategoria` - Lista todas as categorias.
+- `GET /categoria/{id}` - Busca categorias por ID.
+- `POST /categoria` - Cadastra nova categoria.
+- `PUT /categoria/{id}` - Atualiza categoria por ID. 
+- `DELETE /categoria/{id}` - Remove categoria por ID. 
 
 
 ---
+
 
 ## Como rodar localmente:
 Pré-requisitos:
@@ -121,7 +122,7 @@ Pré-requisitos:
 - MySQL Server
 - Visual Studio ou VS Code
 
-1. Clone o repositorio: 
+1. Clone o repositório: 
 [GitHub](https://github.com/TonyBranquinho/CadastroProdutoMySQL)
 2. Configure a string de conexão no appsettings.json:
 "ConnectionStrings": {"DefaultConnection": "server=localhost;database=cadastro_produto;user=root;password=suasenha"}
@@ -131,11 +132,10 @@ Pré-requisitos:
 
 ---
 
-## Melhorias futuras, e que estao sendo implementadas:
-- Implementar autenticaçao JWT.
-- Implementar validaçoes de entrada mais robustas. 
+## Melhorias futuras, e que estão sendo implementadas:
+- Implementar autenticação JWT.
+- Implementar validações de entrada mais robustas. 
 - Criar testes automatizados (xUnit).
-- Implementar autenticaçao e autorizaçao.
 
 **Autor:** Tony Branquinho
 [LinkedIn](https://www.linkedin.com/in/jeferson-branquinho/)
