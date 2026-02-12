@@ -3,6 +3,8 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql&logoColor=white)](https://www.mysql.com)
 [![Azure](https://img.shields.io/badge/Azure-Deployed-0078D4?style=flat&logo=microsoftazure&logoColor=white)](https://cadastroproduto-edg8gfhmatayhefb.brazilsouth-01.azurewebsites.net)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![C#](https://img.shields.io/badge/C%23-239120?style=flat&logo=c-sharp&logoColor=white)](https://learn.microsoft.com/dotnet/csharp/)
+[![ASP.NET Core](https://img.shields.io/badge/ASP.NET%20Core-5C2D91?style=flat&logo=.net&logoColor=white)](https://dotnet.microsoft.com/apps/aspnet)
 
  # CadastroProdutoMySQL
 
