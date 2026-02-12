@@ -50,6 +50,7 @@ namespace CadastroProdutoMySQL.Servicos
                 produtoDetalhadoDTO.Preco = p.Preco;
                 produtoDetalhadoDTO.Categoria = p.Categoria.Nome;
                 produtoDetalhadoDTO.Quantidade = p.Quantidade;
+                produtoDetalhadoDTO.CategoriaId = p.CategoriaId;
 
                 listaProdutoDetalhadoDTO.Add(produtoDetalhadoDTO);
             }

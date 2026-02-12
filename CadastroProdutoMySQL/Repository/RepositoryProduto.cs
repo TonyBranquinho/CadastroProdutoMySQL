@@ -86,8 +86,11 @@ namespace CadastroProdutoMySQL.Dados
                                 produto.Nome = reader.GetString("Nome");
                                 produto.Preco = reader.GetDecimal("Preco");
                                 produto.Quantidade = reader.GetInt32("Quantidade");
+                                produto.CategoriaId = reader.GetInt32("CategoriaId");
+
                                 produto.Categoria.Nome = reader.GetString("NomeCategoria");
-                                
+
+
 
                                 listaP.Add(produto);
                             }
