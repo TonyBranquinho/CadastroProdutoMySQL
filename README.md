@@ -8,7 +8,7 @@
 
  # CadastroProdutoMySQL
 
-Esse é um sistema de cadastro e gerenciamento do produtos, categorias e estoque desenvolvido em **C#**
+Esse é um sistema de gerenciamento do produtos e categorias desenvolvido em **C#**
 com **ASP.NET Core e persistencia em **MySQL**. Segue a arquitetura em camadas e boas praticas de 
 desenvolvimento, incluindo DTOs, serviços, repositorios e controllers.
 
@@ -53,16 +53,16 @@ CadastroProdutoMySQL
 - `Get /api/produto` - Lista todos os produtos.
 - `Get /api/produto/{id}` - Busca produto por ID. 
 - `POST /api/produto` - Cadastra novo produto. 
-- `PUT /api/produto/{id}` - Atualiza produto. 
-- `DELETE /api/produto{id}` - Remove produto. 
+- `PUT /api/produto/{id}` - Atualiza produto por ID. 
+- `DELETE /api/produto{id}` - Remove produto por ID. 
 
 ### Categorias
 - `GET /api/categoria` - Lista todas as categorias.
+- `GET /api/categoria/{id}` - Busca categorias por ID.
 - `POST /api/caetgoria` - Cadastra nova categoria.
+- `PUT /api/categoria/{id}` - Atualiza categoria por ID. 
+- `DELETE /api/produto{id}` - Remove categoria por ID. 
 
-### Estoque
-- `GET /api/estoque` - Lista registros de estoque.
-- `POST /api/produto` - Adiciona entrada/saída de estoque. 
 
 ---
 
