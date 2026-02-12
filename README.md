@@ -8,21 +8,53 @@
 
  # CadastroProdutoMySQL
 
-Esse é um sistema de gerenciamento do produtos e categorias desenvolvido em **C#**
-com **ASP.NET Core e persistencia em **MySQL**. Segue a arquitetura em camadas e boas praticas de 
-desenvolvimento, incluindo DTOs, serviços, repositorios e controllers.
+Esse é uma API RESTful para gestão de produtos, desenvolvida em ASP.NET Core, com persistência em MySQL utilizando ADO.NET, arquitetura em camadas e deploy automatizado no Azure via GitHub Actions.
+
+---
+
+ # Demo:
+ https://cadastroproduto-edg8gfhmatayhefb.brazilsouth-01.azurewebsites.net/swagger/index.html
+
+---
+
+
+## Tecnologias Utilizadas:
+- **C#**
+- **.NET 8/ ASP.NET Core**
+- **MySQL 8**
+- **ADO.NET**
+- **Azure App Service**
+- **GitHub Actions (CI/CD)**
+- **Swagger / OpenAPI**.
+
+---
+
+## Arquitetura:
+ - Arquitetura em camadas, separando responsabilidades:
+ Controller → Service → Repository → Database
+
+Com uso de:
+- **DTOs (Data Transfer Objects)**
+- **Injeção de dependência**
+- **Validações de entrada**
+- **Tratamento de erros**
+- **Organização por namespaces**
 
 ---
 
 ## Funcionalidades:
 
-- **Cadastro de Produtos** com informações detalhadas.
-- **Gerenciamento de Categorias** para organização de produtos.
-- **Controle de Estoque** com movimentaçoes e consultas.
-- **API RESTful** com métodos CRUD completos.
-- **DTOs** para separar as entidades de cominio da comunicaçao com o cliente.
-- **Injeçao de Dependência** para repositórios e serviços.
-- **Configuração de Banco de Dados MySQL** via `appsettings.json`.
+- **Listagem de produtos**.
+- **Cadastro de Produtos**.
+- **Busca de Produto por ID**.
+- **Atualizaçao de Produto por ID**.
+- **Remoçao de Produtos por ID**.
+
+- **Listagem de Categoria**.
+- **Cadastro de Categoria**.
+- **Busca de Categoria por ID**.
+- **Atualizaçao de Categoria por ID**.
+- **Remoçao de Categoria por ID**.
 
 ---
 
@@ -38,12 +70,12 @@ CadastroProdutoMySQL
 
 ---
 
-## Tecnologias Utilizadas:
-- **C# / .NET Core**
-- **ASP.NET Core Web API**
-- **MySQL**
-- **DTOs (Data Transfer Objects)**
-- **Swagger** para execuçao.
+## CI/CD
+- Pipeline automatizado configurado com GitHub Actions:
+- Build da aplicação
+- Teste de compilação
+- Deploy automático no Azure a cada push na branch principal
+- Fluxo real de entrega contínua (CD).
 
 ---
 
@@ -66,18 +98,24 @@ CadastroProdutoMySQL
 
 ---
 
-## Como executar:
+## Como rodar localmente:
+Pré-requisitos:
+- .NET 8 SDK
+- MySQL Server
+- Visual Studio ou VS Code
+
 1. Clone o repositorio: 
 [GitHub](https://github.com/TonyBranquinho/CadastroProdutoMySQL)
-2. Configurar conexão MySQL no appsettings.json
+2. Configure a string de conexão no appsettings.json:
 "ConnectionStrings": {"DefaultConnection": "server=localhost;database=cadastro_produto;user=root;password=suasenha"}
-3. Execute o projeto
+3. Execute o projeto:
 4. Acesse o Swagger para testar os endpoints:
 [https://localhost:7128/swagger/index.html](https://localhost:7128/swagger/index.html)
 
+---
 
 ## Melhorias futuras, e que estao sendo implementadas:
-- Implementar Entity Framework Core (Code First + Migrations).
+- Implementar autenticaçao JWT.
 - Implementar validaçoes de entrada mais robustas. 
 - Criar testes automatizados (xUnit).
 - Implementar autenticaçao e autorizaçao.
