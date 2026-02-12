@@ -2,6 +2,7 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com)
 [![Azure](https://img.shields.io/badge/Azure-Deployed-0078D4?logo=microsoftazure)](seu-link-swagger)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Build and deploy ASP.Net Core app to Azure Web App - CadastroProduto](https://github.com/TonyBranquinho/CadastroProdutoMySQL/actions/workflows/main_cadastroproduto.yml/badge.svg)](https://github.com/TonyBranquinho/CadastroProdutoMySQL/actions/workflows/main_cadastroproduto.yml)
  # CadastroProdutoMySQL
 
 Esse é um sistema de cadastro e gerenciamento do produtos, categorias e estoque desenvolvido em **C#**
