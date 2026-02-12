@@ -140,3 +140,7 @@ Pré-requisitos:
 **Autor:** Tony Branquinho
 [LinkedIn](https://www.linkedin.com/in/jeferson-branquinho/)
 [GitHub](https://github.com/TonyBranquinho)
+
+---
+## Licença
+Este projeto está sob a licença MIT. Consulte o arquivo [LICENSE](LICENSE) para mais detalhes.
