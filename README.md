@@ -11,6 +11,23 @@
 Esse é uma API RESTful para gestão de produtos, desenvolvida em ASP.NET Core, com persistência em MySQL utilizando ADO.NET, arquitetura em camadas e deploy automatizado no Azure via GitHub Actions.
 
 ---
+# Imagens
+
+1. Tela inicial de execução no Swagger:
+- ![Tela principal](imagens/Swagger.jpg)
+2. Tela da resposta de uma busca pelos produtos cadastrados:
+- ![Tela principal](imagens/getproduto.jpg)
+3. Tela da resposta de uma busca pelas categorias cadastrados:
+- ![Tela principal](imagens/getcategoria.jpg)
+4. Tela do centro de implantacão no Azure:
+- ![Tela principal](imagens/Azure.jpg)
+5. Tela do MySQL rodando no Aiven:
+- ![Tela principal](imagens/MySQLnoAiven.jpg)
+6. Diagrama de arquitetura do projeto:
+- ![Tela principal](imagens/Diagramaarquitetura.jpg)
+
+
+---
 
  # Demo:
  https://cadastroproduto-edg8gfhmatayhefb.brazilsouth-01.azurewebsites.net/swagger/index.html
